@@ -5,10 +5,12 @@
 Set users permissions to folders on a Data Lake; permisions are set in a csv.
 
 ## SetUp
-1. Create a csv with following headers (see sample.csv)
+1. Create a csv with following headers
+
 
 ```
-Folder,ADGroup,Permission,GroupID,IncludeInDefault, Recursive
+Folder, ADGroup, ADGroupID, Permission, IncludeInDefault, Recurse
+
 ```
  - Folder - access path of the folder
  - ADGroup - ADGroup to add permissions to
@@ -18,6 +20,18 @@ Folder,ADGroup,Permission,GroupID,IncludeInDefault, Recursive
  - Recurse - boolean. Determines if the permissions should be applied recursively to all child items of folder. This takes longer to run.
 
  Add the permissions as required.
+
+
+Example below - 
+```
+Folder, ADGroup, ADGroupID, Permission, IncludeInDefault, Recurse
+/,adlsRoot,80024941-9710-47d2-8be9-f06f4389620f,---,False,True
+/output2,adlsOutput,16050cad-cf12-4c2d-9ba8-57a7553184a5,rwx,False,False
+/output2/whatis,adlsProcess,b8243406-018c-4129-9fcb-f965e916d835,rwx,False,False
+/process2,adlsProcess,b8243406-018c-4129-9fcb-f965e916d835,rwx,False,False
+/raw2,adlsRaw,5b6fd483-9acc-4978-9b0f-352eebf234a7,rwx,True,False
+/raw2/howabout,adlsOutput,16050cad-cf12-4c2d-9ba8-57a7553184a5,rwx,False,False
+```
 
  ## Execute
 
