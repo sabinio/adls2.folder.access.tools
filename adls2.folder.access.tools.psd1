@@ -98,7 +98,7 @@
             # LicenseUri = ''
 
             # A URL to the main website for this project.
-            #ProjectUri = 'https://github.com/whatis'
+            #ProjectUri = 'https://github.com/sabinio/adls2.folder.access.tools'
 
             # A URL to an icon representing this module.
             # IconUri = ''
@@ -111,7 +111,7 @@
     } # End of PrivateData hashtable
 
     # HelpInfo URI of this module
-    #HelpInfoURI = 'https://github.com/whatis'
+    #HelpInfoURI = 'https://github.com/sabinio/adls2.folder.access.tools'
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
