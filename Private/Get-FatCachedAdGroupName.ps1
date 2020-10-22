@@ -1,4 +1,4 @@
-Function Get-CachedAdGroupName{
+Function Get-FatCachedAdGroupName{
     param($ObjectId)
 
     if ($null -eq $AdGroupCache){

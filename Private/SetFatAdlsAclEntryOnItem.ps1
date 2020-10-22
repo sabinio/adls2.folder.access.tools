@@ -21,7 +21,7 @@ Function Set-FatAdlsAclEntryOnItem {
         Write-Verbose ($aclList | Where-Object { @("User", "Group") -contains $_.AccessControlType -and $null -ne $_.EntityId } | ForEach-Object { 
                 [PSCustomObject]@{Default = $_.DefaultScope;
                     Type = $_.AccessControlType;
-                    EntityId = $_.EntityId; Group = (Get-CachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
+                    EntityId = $_.EntityId; Group = (Get-FatCachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
                 } 
             } | Format-Table | out-string  )
         Write-Verbose "ACL Entry $($aclEntry.Items.Count)"
@@ -32,7 +32,7 @@ Function Set-FatAdlsAclEntryOnItem {
             for ($i = $aclList.Count; $i -gt 0; $i-- ) {
                 $currentAcl = $aclList[$i]
                 if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
-                    $ADGroup = Get-CachedAdGroupName -ObjectId $currentAcl.EntityId#
+                    $ADGroup = Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId#
                     Write-Verbose "Looking for Acl for $($currentAcl.EntityId)# $($ADGroup.DisplayName) $($currentAcl.DefaultScope)"
 
                     $matchingAcls = @($AclEntry.Items | Where-Object { $AdGroup.DisplayName -eq $_.ADGroup })
@@ -67,7 +67,7 @@ Function Set-FatAdlsAclEntryOnItem {
             }
             else {
                 Write-Verbose "[*] Getting the GroupId from AAD"
-                $ADGroup = Get-CachedAdGroupId -DisplayName $acl.ADGroup
+                $ADGroup = Get-FatCachedAdGroupId -DisplayName $acl.ADGroup
                 $ADGroupId = $ADGroup.Id
             }
             if (-not [string]::IsNullOrWhitespace($acl.DefaultPermission)) {
@@ -90,7 +90,7 @@ Function Set-FatAdlsAclEntryOnItem {
             $currentAcl = $aclList[$i]
             if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
                 if ($currentAcl.GetSymbolicRolePermissions() -eq '---') {
-                    Write-Verbose "Removing --- $((Get-CachedAdGroupName -ObjectId $currentAcl.EntityId).DisplayName) $($currentAcl.DefaultScope)"
+                    Write-Verbose "Removing --- $((Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId).DisplayName) $($currentAcl.DefaultScope)"
                     $aclList.RemoveAt($i) | out-null;    
                 }
             }
@@ -99,7 +99,7 @@ Function Set-FatAdlsAclEntryOnItem {
         Write-Verbose ($aclList | Where-Object { @("User", "Group") -contains $_.AccessControlType -and $null -ne $_.EntityId } | ForEach-Object { 
                 [PSCustomObject]@{Default = $_.DefaultScope;
                     Type = $_.AccessControlType;
-                    EntityId = $_.EntityId; Group = (Get-CachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
+                    EntityId = $_.EntityId; Group = (Get-FatCachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
                 } 
             } | Format-Table | out-string  )
         $Comparison = Compare-Object  $Gen2Item.ACL $aclList -property "EntityId", "Permissions", "AccessControlType", "DefaultScope"
@@ -109,7 +109,7 @@ Function Set-FatAdlsAclEntryOnItem {
             $Comparison | ForEach-Object { [pscustomObject]@{Permissions = $_.Permissions;
                     Default                                              = $_.DefaultScope;
                     Type                                                 = $_.AccessControlType;
-                    Group                                                = (Get-CachedAdGroupName -objectId $_.EntityId).DisplayName;
+                    Group                                                = (Get-FatCachedAdGroupName -objectId $_.EntityId).DisplayName;
                     Change                                               = $_.SideIndicator
                 } } | Format-Table Group, Type, Default, Permissions, Change
 

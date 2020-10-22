@@ -28,6 +28,10 @@ where ```<subscription-name>``` set to name of subscription that data lake is in
 
 If folders do not exist then they are created. All folders must be created by the executing user/sp and not via any other process - see [Data lake Permisions Required to Execute](#Data-lake-Permisions-Required-to-Execute)
 
+## How Can I Check Changes to ACl First?
+
+The 
+
 ## Data lake Permisions Required to Execute
 This can be executed by a user or service principal (sp) via Azure DevOps Pipeline.
 
@@ -37,3 +41,61 @@ When executing script user/sp needs to be either a super user of the Data Lake o
 If not supplying GroupId user/sp needs one of the following:
  - to be a member of the GlobalRead role in Azure Active Directory (preference is this option)
  - have "Directory.ReadAll" permission granted from the Graph API.
+
+
+## How To Run In An AzDo Pipeline
+
+Use an Azure PowerShell Task. Ensure you are usinghte latest version of the Az PowerShell cmdlets.
+
+```powershell
+
+Set-Location $(System.DefaultWorkingDirectory);
+$ErrorActionPreference="Stop"
+$sandboxSet = Get-Item .\stages\devadls4u.csv
+$dataLakeName = "devadls4u"
+$subscriptionName = "dev4usub"
+$rgName = "dev4u"
+
+Install-Module adls2.folder.access.tools -Force -AllowPrerelease
+
+$csv =  Get-FatCsvAsArray -csvPath $sandboxSet
+Set-FatAdlsAccess -subscriptionName $subscriptionName -RgName $rgName -dataLakeStoreName $dataLakeName -aclFolders $csv -entryType "acl" -Verbose
+```
+
+## How To Run Locally/Interractive
+
+```powershell
+Write-Host "Loading modules"
+import-module Az.Accounts -minimumVersion 1.9.1 -Force -ErrorAction Continue
+import-module Az.Resources -Force
+Import-Module .\adlsgen2.folder.access.tools -Force
+
+$ErrorActionPreference="Stop"
+$sandboxSet = Get-Item .\stages\devadls4u.csv
+$dataLakeName = "devadls4u"
+$subscriptionName = "dev4usub"
+$rgName = "dev4u"
+
+Connect-AzAccount -UseDeviceAuthentication
+
+Write-Host "Ensuring connected to correct subscription"
+if ((Get-AzContext).Subscription.Name -ne $subscriptionName) {
+    Set-AzContext -SubscriptionName $subscriptionName
+}
+
+Get-AzConnection  -SubscriptionName $subscriptionName
+
+Write-Host "Loading csv"
+$csv = Get-FatCsvAsArray -csvPath $sandboxSet
+
+$csv | Format-Table
+Write-Host "Processing Acls $($csv.Count)"
+
+try {
+    Set-FatAdlsAccess -subscriptionName $subscriptionName -RgName $rgName -dataLakeStoreName $dataLakeName -aclFolders $csv -entryType "acl" -Verbose -RemoveAcls:$removeAcls -WhatIf:$WhatIf
+}
+catch {
+    throw $_.Exception
+}
+
+```
