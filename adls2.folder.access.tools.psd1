@@ -9,7 +9,7 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule = 'azure.datalake-gen2.folder.access.tools.psm1'
+    RootModule = 'adls2.folder.access.tools.psm1'
 
     # Version number of this module.
     ModuleVersion = '0.0.0'
