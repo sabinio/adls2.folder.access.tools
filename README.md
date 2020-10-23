@@ -82,7 +82,7 @@ Set-FatAdlsAccess -subscriptionName $subscriptionName -RgName $rgName -dataLakeS
 Write-Host "Loading modules"
 import-module Az.Accounts -minimumVersion 1.9.1 -Force -ErrorAction Continue
 import-module Az.Resources -Force
-Import-Module .\adlsgen2.folder.access.tools -Force
+Import-Module .\adls2.folder.access.tools -Force
 
 $ErrorActionPreference="Stop"
 $sandboxSet = Get-Item .\stages\devadls4u.csv
