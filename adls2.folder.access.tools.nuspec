@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<metadata>
+<id>adls2.folder.access.tools</id>
+<version>1.0.0.0</version>
+<authors>Richie Lee</authors>
+<description>Set users permissions to folders on a Data Lake; permisions are set in a csv.</description>
+</metadata>
+<files>
+<file src="adls2.folder.access.tools.psd1"/>
+<file src="adls2.folder.access.tools.psm1"/>
+<file src="README.md"/>
+<file src="Private\Get-FatCachedAdGroupId.ps1" target="Private"/>
+<file src="Private\Get-FatCachedAdGroupName.ps1" target="Private"/>
+<file src="Private\GetFatAdlsAclItemEntry.ps1" target="Private"/>
+<file src="Private\GetFatAdlsFolderPermissions.ps1" target="Private"/>
+<file src="Private\SetFatAdlsAclEntryInCsv.ps1" target="Private"/>
+<file src="Private\SetFatAdlsAclEntryOnItem.ps1" target="Private"/>
+<file src="Public\Get-FatAzConnection.ps1" target="Public"/>
+<file src="Public\GetFatAdlsAccessIntoCsv.ps1" target="Public"/>
+<file src="Public\GetFatCsvAsArray.ps1" target="Public"/>
+<file src="Public\GetFatDataLake.ps1" target="Public"/>
+<file src="Public\NewFatDataLake.ps1" target="Public"/>
+<file src="Public\SetFatAdlsAccess.ps1" target="Public"/>
+</files>
+</package>
