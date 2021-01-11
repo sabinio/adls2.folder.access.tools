@@ -25,4 +25,5 @@ $minVersion =  "3.2.0"
 $checkInstalled = Get-InstalledModule -Name $moduleName -MinimumVersion $minVersion -ErrorAction SilentlyContinue
 if ($null -eq $checkInstalled) {
     Install-Module -Name $moduleName -RequiredVersion $minVersion -Force -Scope CurrentUser -Verbose
+    Import-Module -MinimumVersion $minVersion -Name $moduleName
 }
