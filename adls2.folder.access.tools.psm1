@@ -20,10 +20,9 @@ Export-ModuleMember -Function $Public.Basename
 Export-ModuleMember -Alias * -Function *
 
 $moduleName = "Az.Storage" 
-$minVersion =  "2.5.2-preview"
+$minVersion =  "3.2.0"
 # https://github.com/PowerShell/PowerShell/issues/7495
-$checkInstalled = Get-InstalledModule -Name $moduleName -MinimumVersion $minVersion -ErrorAction SilentlyContinue -AllowPrerelease
+$checkInstalled = Get-InstalledModule -Name $moduleName -MinimumVersion $minVersion -ErrorAction SilentlyContinue
 if ($null -eq $checkInstalled) {
-    Install-Module -Name $moduleName -RequiredVersion $minVersion -Force -Scope CurrentUser -AllowPrerelease
-    
+    Install-Module -Name $moduleName -RequiredVersion $minVersion -Force -Scope CurrentUser
 }
