@@ -141,7 +141,6 @@ Function Set-FatAdlsAclEntryOnItem {
                         $RecurseParams.Add('WhatIf', $True)
                     }
                     Write-Host "Importing ModuleAz.Storage.."
-                    Import-Module Az.Storage -MinimumVersion 3.2.0 -Verbose
                     Update-AzDataLakeGen2AclRecursive @RecurseParams
                 }
                 catch {
