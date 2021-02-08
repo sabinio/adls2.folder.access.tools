@@ -15,13 +15,16 @@ Function Set-FatAdlsAclEntryOnItem {
         $Gen2Item = Get-AzDataLakeGen2Item -Context $ctx -FileSystem $AclEntry.container -Path $aclEntry.folder
         Write-Verbose "Owner = $($Gen2Item.Owner)"
         $aclList = [Collections.Generic.List[System.Object]]($Gen2Item.ACL)
-
-
         Write-Verbose "Current Acl"
-        Write-Verbose ($aclList | Where-Object { @("User", "Group") -contains $_.AccessControlType -and $null -ne $_.EntityId } | ForEach-Object { 
+        Write-Verbose ($aclList | Where-Object { @("User", "Group") -contains $_.AccessControlType -and $null -ne $_.EntityId } | `
+        ForEach-Object { 
+            $ADGroup = Get-FatCachedAdGroupName -ObjectId $_.EntityId
+            $ADGroupDisplayName = $ADGroup.DisplayName
                 [PSCustomObject]@{Default = $_.DefaultScope;
                     Type = $_.AccessControlType;
-                    EntityId = $_.EntityId; Group = (Get-FatCachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
+                    EntityId = $_.EntityId; 
+                    Group = $ADGroupDisplayName; 
+                    Perms = $_.GetSymbolicRolePermissions()
                 } 
             } | Format-Table | out-string  )
         Write-Verbose "ACL Entry $($aclEntry.Items.Count)"
@@ -32,8 +35,8 @@ Function Set-FatAdlsAclEntryOnItem {
             for ($i = $aclList.Count; $i -gt 0; $i-- ) {
                 $currentAcl = $aclList[$i]
                 if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
-                    $ADGroup = Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId#
-                    Write-Verbose "Looking for Acl for $($currentAcl.EntityId)# $($ADGroup.DisplayName) $($currentAcl.DefaultScope)"
+                    $ADGroup = Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId
+                    Write-Verbose "Looking for Acl for $($currentAcl.EntityId) $($ADGroup.DisplayName) $($currentAcl.DefaultScope)"
 
                     $matchingAcls = @($AclEntry.Items | Where-Object { $AdGroup.DisplayName -eq $_.ADGroup })
                     Write-Verbose "Acls matching on Group $($matchingACls.Count)"

@@ -24,6 +24,6 @@ $minVersion =  "3.2.0"
 # https://github.com/PowerShell/PowerShell/issues/7495
 $checkInstalled = Get-InstalledModule -Name $moduleName -MinimumVersion $minVersion -ErrorAction SilentlyContinue
 if ($null -eq $checkInstalled) {
-    Install-Module -Name $moduleName -RequiredVersion $minVersion -Force -Scope CurrentUser -Verbose
+    Install-Module -Name $moduleName -RequiredVersion $minVersion -Force -Scope CurrentUser -Verbose -AllowClobber
     Import-Module -MinimumVersion $minVersion -Name $moduleName
 }
