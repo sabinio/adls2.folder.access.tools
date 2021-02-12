@@ -3,7 +3,7 @@
 
 #Set-Location $PSScriptRoot
 $Edition = $PSVersionTable.PSEdition
-Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Path ./*.Tests.ps1 `
+Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Path ./*.Tests.ps1  `
 -OutputFile "TestResults-$Edition.xml" `
 -OutputFormat NUnitXML `
 -CodeCoverageOutputFile "coverage_$Edition-results.xml"
