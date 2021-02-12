@@ -3,7 +3,8 @@ $CommandName = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 
 if (-not $ModulePath) { $ModulePath = join-path (join-path $PSScriptRoot "..") "adls2.folder.access.tools" }
 Get-Module adls2.folder.access.tools | remove-module
-. $ModulePath/Public/$CommandName.ps1
+$CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName.ps1)
+. $CommandNamePath
 
 BeforeAll {
     $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv
