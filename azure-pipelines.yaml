@@ -18,7 +18,7 @@ variables:
 pool:
   vmImage: 'ubuntu-latest'
 
-name: Dreepy_$(BuildID)
+name: adls2.folder.access.tools_$(BuildID)
 
 steps:
   - task: PowerShell@2
@@ -37,7 +37,7 @@ steps:
           Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
           Set-Location "./adls2.folder.access.tools.Tests"
           $Edition = $PSVersionTable.PSEdition
-          Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script "./*.Tests.ps1" `
+          Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Script "./*.Tests.ps1" `
           -OutputFile "$Edition-TestResults.xml" `
           -OutputFormat NUnitXML `
           -CodeCoverageOutputFile "coverage-$Edition-results.xml"
