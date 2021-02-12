@@ -44,7 +44,7 @@ steps:
     displayName: "Publish Test Results **/Test*Results.xml"
     inputs:
       testResultsFormat: NUnit
-      testResultsFiles: "**/Test-*Results.xml"
+      testResultsFiles: "**/*-Results.xml"
       testRunTitle: ubuntu-latest
       publishRunAttachments: false
       failTaskOnFailedTests: true
