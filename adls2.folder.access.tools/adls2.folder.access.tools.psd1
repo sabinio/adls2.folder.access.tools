@@ -67,7 +67,7 @@
 
     # Functions to export from this module
     FunctionsToExport = 'New-FatDataLake', 'Set-FatAdlsAccess', "Get-FatDataLake",
-                        'Get-FatAdlsAccessIntoCsv', 'Get-FatCsvAsArray','Get-FatAzConnection', 'Get-FatCachedAdGroupName', 'Get-FatCachedAdGroupId'
+                        'Get-FatAdlsAccessIntoCsv', 'Get-FatCsvAsArray','Get-FatAzConnection'
 
     # Cmdlets to export from this module
     CmdletsToExport = '*'

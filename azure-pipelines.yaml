@@ -1,0 +1,92 @@
+
+trigger:
+  - master
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
+
+variables:
+- name: baseVersionNumber
+  value: '0.143'
+- name: Minor 
+  value: $[counter(variables['BaseVersionNumber'], 1)]
+- name: VersionNumber 
+  value: $(BaseVersionNumber).$(Minor)
+
+pool:
+  vmImage: 'windows-latest'
+
+name: Dreepy_$(BuildID)
+
+steps:
+  - task: PowerShell@2
+    displayName: "Update Build Number"
+    inputs:
+      targetType: 'inline'
+      script: |
+            $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
+            Write-Host "##vso[build.updatebuildnumber]$BuildName"
+  - task: PowerShell@2
+    displayName: "Powershell Pester Tests on Windows Latest"
+    inputs:
+      targetType: "inline"
+      script: |
+        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
+        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
+        Set-Location "./Tests"
+        $Edition = $PSVersionTable.PSEdition
+        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+      pwsh: true
+
+  - task: PublishTestResults@2
+    displayName: "Publish Test Results **/Test*Results.xml"
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: "**/Test-*Results.xml"
+      testRunTitle: ubuntu-latest
+      publishRunAttachments: false
+      failTaskOnFailedTests: true
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Tests Coverage'
+    inputs:
+      codeCoverageTool: 'JaCoCo'
+      summaryFileLocation: '**/coverage-*-results.xml'
+      pathToSources: '$(System.DefaultWorkingDirectory)'
+      failIfCoverageEmpty: true
+
+  - task: CopyFiles@2
+    displayName: "Copy Files to: $(build.artifactstagingdirectory)"
+    inputs:
+      Contents: |
+        adls2.folder.access.tools\Private\**
+        adls2.folder.access.tools\Public\**
+        adls2.folder.access.tools\*.psd1
+        adls2.folder.access.tools\*.psm1
+      TargetFolder: "$(build.artifactstagingdirectory)"
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact: adls2.folder.access.tools"
+    inputs:
+      ArtifactName: adls2.folder.access.tools
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: adls2.folder.access.tools
+      path: $(Build.ArtifactStagingDirectory)\adls2.folder.access.tools
+
+  - task: PowerShell@2
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    displayName: "Publish to PowerShellGallery"
+    inputs:
+      targetType: "inline"
+      script: |
+        Install-Module Spiny -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+        Import-Module Spiny -Force -Verbose
+        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools/adls2.folder.access.tools.psd1
+        Publish-SPPackageToPowerShellGallery `
+        -apiKey '$(apikey)' `
+        -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools
+      pwsh: true
