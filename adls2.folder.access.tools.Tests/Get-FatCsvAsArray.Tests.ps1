@@ -1,4 +1,3 @@
-#Requires -Module azure.databricks.cicd.tools
 param($ModulePath)
 $CommandName = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 
