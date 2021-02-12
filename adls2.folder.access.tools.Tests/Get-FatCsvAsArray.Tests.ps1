@@ -6,6 +6,8 @@ Get-Module adls2.folder.access.tools | remove-module
 $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName.ps1)
 . $CommandNamePath
 
+Write-Host $CommandNamePath
+
 BeforeAll {
     $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv
 }
