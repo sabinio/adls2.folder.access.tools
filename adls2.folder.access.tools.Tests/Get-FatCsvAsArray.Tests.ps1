@@ -1,6 +1,9 @@
+param($ModulePath)
+$CommandName = $MyInvocation.MyCommand.Name.Replace(".Tests.ps1", "")
 
-Set-Location $PSScriptRoot
-Import-Module "..\adls2.folder.access.tools\adls2.folder.access.tools\public\Get-FatCsvAsArray.ps1" -Force
+if (-not $ModulePath) { $ModulePath = join-path (join-path $PSScriptRoot "..") "adls2.folder.access.tools" }
+Get-Module adls2.folder.access.tools | remove-module
+. $ModulePath/Public/$CommandName.ps1
 
 BeforeAll {
     $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv
