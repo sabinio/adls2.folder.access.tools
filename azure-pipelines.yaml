@@ -38,16 +38,16 @@ steps:
           Set-Location "./adls2.folder.access.tools.Tests"
           $Edition = $PSVersionTable.PSEdition
           Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script "./*.Tests.ps1" `
-          -OutputFile "TestResults-$Edition.xml" `
+          -OutputFile "$Edition-TestResults.xml" `
           -OutputFormat NUnitXML `
-          -CodeCoverageOutputFile "coverage_$Edition.xml"
+          -CodeCoverageOutputFile "coverage-$Edition-results.xml"
       pwsh: true
 
   - task: PublishTestResults@2
-    displayName: "Publish Test Results **/Test*Results.xml"
+    displayName: "Publish Test Results **/*-TestResults.xml"
     inputs:
       testResultsFormat: NUnit
-      testResultsFiles: "**/*-Results.xml"
+      testResultsFiles: "**/*-TestResults.xml"
       testRunTitle: ubuntu-latest
       publishRunAttachments: false
       failTaskOnFailedTests: true
