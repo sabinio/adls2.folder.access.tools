@@ -29,15 +29,18 @@ steps:
             $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
             Write-Host "##vso[build.updatebuildnumber]$BuildName"
   - task: PowerShell@2
-    displayName: "Powershell Pester Tests on Windows Latest"
+    displayName: "Powershell Pester Tests on Ubuntu Latest"
     inputs:
       targetType: "inline"
       script: |
-        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
-        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
-        Set-Location "./adls2.folder.access.tools.Tests"
-        $Edition = $PSVersionTable.PSEdition
-        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+          Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+          Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
+          Set-Location "./adls2.folder.access.tools.Tests"
+          $Edition = $PSVersionTable.PSEdition
+          Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script "./*.Tests.ps1" `
+          -OutputFile "TestResults-$Edition.xml" `
+          -OutputFormat NUnitXML `
+          -CodeCoverageOutputFile "coverage_$Edition.xml"
       pwsh: true
 
   - task: PublishTestResults@2
