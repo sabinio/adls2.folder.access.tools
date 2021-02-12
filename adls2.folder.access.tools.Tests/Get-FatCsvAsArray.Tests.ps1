@@ -1,5 +1,4 @@
 param($ModulePath)
-Write-Host $CommandNamePath
 
 BeforeAll {
     $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv

@@ -63,11 +63,12 @@ steps:
   - task: CopyFiles@2
     displayName: "Copy Files to: $(build.artifactstagingdirectory)"
     inputs:
+      SourceFolder: adls2.folder.access.tools
       Contents: |
-        adls2.folder.access.tools\Private\**
-        adls2.folder.access.tools\Public\**
-        adls2.folder.access.tools\*.psd1
-        adls2.folder.access.tools\*.psm1
+        Private\**
+        Public\**
+        *.psd1
+        *.psm1
       TargetFolder: "$(build.artifactstagingdirectory)"
 
   - task: PublishBuildArtifacts@1

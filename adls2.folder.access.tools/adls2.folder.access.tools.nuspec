@@ -9,7 +9,7 @@
 <files>
 <file src="adls2.folder.access.tools.psd1"/>
 <file src="adls2.folder.access.tools.psm1"/>
-<file src="README.md"/>
+<file src="..\README.md"/>
 <file src="Private\Get-FatCachedAdGroupId.ps1" target="Private"/>
 <file src="Private\Get-FatCachedAdGroupName.ps1" target="Private"/>
 <file src="Private\GetFatAdlsAclItemEntry.ps1" target="Private"/>
