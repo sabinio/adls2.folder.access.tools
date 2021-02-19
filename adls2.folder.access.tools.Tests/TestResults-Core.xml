@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2021-02-12" time="09:58:06">
-  <environment nunit-version="2.5.8.0" platform="Microsoft Windows 10 Pro|C:\WINDOWS|\Device\Harddisk0\Partition3" machine-name="DESKTOP-EVLFIM4" user-domain="AzureAD" os-version="10.0.19042" clr-version="Unknown" cwd="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests" user="RichardLee" />
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2021-02-12" time="11:39:55">
+  <environment machine-name="DESKTOP-EVLFIM4" platform="Microsoft Windows 10 Pro|C:\WINDOWS|\Device\Harddisk0\Partition3" nunit-version="2.5.8.0" os-version="10.0.19042" user="RichardLee" cwd="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests" clr-version="Unknown" user-domain="AzureAD" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="0.2073" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="0.2524" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests\Get-FatCsvAsArray.Tests.ps1" executed="True" result="Success" success="True" time="0.2073" asserts="0" description="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests\Get-FatCsvAsArray.Tests.ps1">
+      <test-suite type="TestFixture" name="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests\Get-FatCsvAsArray.Tests.ps1" executed="True" result="Success" success="True" time="0.2524" asserts="0" description="C:\Users\RichardLee\source\repos\adls2.folder.access.tools\adls2.folder.access.tools.Tests\Get-FatCsvAsArray.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="Discovery example" executed="True" result="Success" success="True" time="0.1019" asserts="0" description="Discovery example">
+          <test-suite type="TestFixture" name="Discovery example" executed="True" result="Success" success="True" time="0.1489" asserts="0" description="Discovery example">
             <results>
-              <test-suite type="TestFixture" name="Discovery example.Some tests" executed="True" result="Success" success="True" time="0.0531" asserts="0" description="Discovery example.Some tests">
+              <test-suite type="TestFixture" name="Discovery example.Some tests" executed="True" result="Success" success="True" time="0.0881" asserts="0" description="Discovery example.Some tests">
                 <results>
-                  <test-case description=" is true" name="Discovery example.Some tests. is true" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description=" is true" name="Discovery example.Some tests. is true" time="0.0269" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>

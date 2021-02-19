@@ -18,7 +18,7 @@ variables:
 pool:
   vmImage: 'ubuntu-latest'
 
-name: Dreepy_$(BuildID)
+name: adls2.folder.access.tools_$(BuildID)
 
 steps:
   - task: PowerShell@2
@@ -29,22 +29,25 @@ steps:
             $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
             Write-Host "##vso[build.updatebuildnumber]$BuildName"
   - task: PowerShell@2
-    displayName: "Powershell Pester Tests on Windows Latest"
+    displayName: "Powershell Pester Tests on Ubuntu Latest"
     inputs:
       targetType: "inline"
       script: |
-        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
-        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
-        Set-Location "././adls2.folder.access.tools.Tests"
-        $Edition = $PSVersionTable.PSEdition
-        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+          Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+          Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
+          Set-Location "./adls2.folder.access.tools.Tests"
+          $Edition = $PSVersionTable.PSEdition
+          Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Script "./*.Tests.ps1" `
+          -OutputFile "$Edition-TestResults.xml" `
+          -OutputFormat NUnitXML `
+          -CodeCoverageOutputFile "coverage-$Edition-results.xml"
       pwsh: true
 
   - task: PublishTestResults@2
-    displayName: "Publish Test Results **/Test*Results.xml"
+    displayName: "Publish Test Results **/*-TestResults.xml"
     inputs:
       testResultsFormat: NUnit
-      testResultsFiles: "**/Test-*Results.xml"
+      testResultsFiles: "**/*-TestResults.xml"
       testRunTitle: ubuntu-latest
       publishRunAttachments: false
       failTaskOnFailedTests: true
@@ -60,11 +63,12 @@ steps:
   - task: CopyFiles@2
     displayName: "Copy Files to: $(build.artifactstagingdirectory)"
     inputs:
+      SourceFolder: adls2.folder.access.tools
       Contents: |
-        adls2.folder.access.tools\Private\**
-        adls2.folder.access.tools\Public\**
-        adls2.folder.access.tools\*.psd1
-        adls2.folder.access.tools\*.psm1
+        Private\**
+        Public\**
+        *.psd1
+        *.psm1
       TargetFolder: "$(build.artifactstagingdirectory)"
 
   - task: PublishBuildArtifacts@1
