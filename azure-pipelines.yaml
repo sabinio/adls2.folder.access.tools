@@ -65,8 +65,8 @@ steps:
     inputs:
       SourceFolder: adls2.folder.access.tools
       Contents: |
-        Private\**
-        Public\**
+        Private/**
+        Public/**
         *.psd1
         *.psm1
       TargetFolder: "$(build.artifactstagingdirectory)"
