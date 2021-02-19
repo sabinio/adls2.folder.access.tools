@@ -50,6 +50,7 @@ Function Set-FatAdlsAccess {
             Write-Host "Running WhatIf"
             $FatAdlsAclEntryOnItem.Add('WhatIf', $True)
         }
+        # i hate to add a comment but disabling until we get default permissions sorted
         # if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
         #     Write-Host "Removing ACL's"
         #     $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
