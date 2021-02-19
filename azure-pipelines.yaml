@@ -89,8 +89,8 @@ steps:
       script: |
         Install-Module Spiny -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
         Import-Module Spiny -Force -Verbose
-        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools/adls2.folder.access.tools.psd1
+        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools.psd1
         Publish-SPPackageToPowerShellGallery `
         -apiKey '$(apikey)' `
-        -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools
+        -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools
       pwsh: true
