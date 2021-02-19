@@ -50,10 +50,10 @@ Function Set-FatAdlsAccess {
             Write-Host "Running WhatIf"
             $FatAdlsAclEntryOnItem.Add('WhatIf', $True)
         }
-        if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
-            Write-Host "Removing ACL's"
-            $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
-        }
+        # if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
+        #     Write-Host "Removing ACL's"
+        #     $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
+        # }
 
 
         Set-FatAdlsAclEntryOnItem @FatAdlsAclEntryOnItem
