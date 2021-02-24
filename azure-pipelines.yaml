@@ -65,8 +65,8 @@ steps:
     inputs:
       SourceFolder: adls2.folder.access.tools
       Contents: |
-        Private\**
-        Public\**
+        Private/**
+        Public/**
         *.psd1
         *.psm1
       TargetFolder: "$(build.artifactstagingdirectory)"
@@ -79,18 +79,18 @@ steps:
   - task: DownloadPipelineArtifact@2
     inputs:
       artifact: adls2.folder.access.tools
-      path: $(Build.ArtifactStagingDirectory)\adls2.folder.access.tools
+      path: $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools
 
   - task: PowerShell@2
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     displayName: "Publish to PowerShellGallery"
     inputs:
       targetType: "inline"
       script: |
         Install-Module Spiny -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
         Import-Module Spiny -Force -Verbose
-        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools/adls2.folder.access.tools.psd1
+        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools.psd1
         Publish-SPPackageToPowerShellGallery `
         -apiKey '$(apikey)' `
-        -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools/adls2.folder.access.tools
+        -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools
       pwsh: true
