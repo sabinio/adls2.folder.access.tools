@@ -2,7 +2,6 @@ param($ModulePath)
 
 BeforeAll {
     $CommandName = 'Get-FatDataLake.ps1'
-    Import-Module Az -Force -Scope CurrentUser
     if (-not $ModulePath) { $ModulePath = join-path (join-path $PSScriptRoot "..") "adls2.folder.access.tools" }
     Get-Module adls2.folder.access.tools | remove-module
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)

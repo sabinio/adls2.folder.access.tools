@@ -33,6 +33,8 @@ steps:
     inputs:
       targetType: "inline"
       script: |
+          Install-Module Az -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+          Import-Module Az
           Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
           Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
           Set-Location "./adls2.folder.access.tools.Tests"
