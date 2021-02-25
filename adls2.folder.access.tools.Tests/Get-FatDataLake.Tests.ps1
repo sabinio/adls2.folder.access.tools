@@ -8,9 +8,10 @@ BeforeAll {
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)
     Import-Module $CommandNamePath -Force
 }
-Describe '$CommandName' -Tag 'Unit' {
+Describe "Get-FatDataLake" -Tag 'Unit' {
     Context 'Checking data lake exists' {
         It "DataLake does not exist" {
+            Import-Module Az.DataLakeStore -Force
             Mock Test-AzDataLakeStoreAccount {
                 Return $null
             }

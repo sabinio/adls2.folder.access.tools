@@ -11,7 +11,7 @@ BeforeAll {
     
 }
 
-Describe '$CommandName' -Tag 'Unit' {
+Describe "Test-FatAADGroupsExist" -Tag 'Unit' {
     Context 'Checking groups exist' {
         It "Group Exists" {
             $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv

@@ -9,7 +9,7 @@ BeforeAll {
     Import-Module $CommandNamePath -Force
 }
 
-Describe '$CommandName' -Tag 'Unit' {
+Describe "Get-FatCsvAsArray" -Tag 'Unit' {
     Context 'Using valid CSV' {
         It "Function does not throw" {
             { Get-FatCsvAsArray -csvPath $csvPath } | Should -Not -Throw
