@@ -33,6 +33,10 @@ steps:
     inputs:
       targetType: "inline"
       script: |
+          Install-Module Az.Storage -MinimumVersion 3.2.0 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+          Import-Module Az.Storage
+          Install-Module Az.DataLakeStore -MinimumVersion 1.2.8 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+          Import-Module Az.DataLakeStore
           Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
           Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
           Set-Location "./adls2.folder.access.tools.Tests"
