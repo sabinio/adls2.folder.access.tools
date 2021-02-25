@@ -3,10 +3,10 @@ Function Get-FatDataLake {
     param(
         [parameter(Mandatory = $true)][string]$resourceGroupName,
         [parameter(Mandatory = $true)][string]$dataLakeName
-        )
-
+    )
+    $noDataLake4U = $null
     $noDataLake4U = Test-AzDataLakeStoreAccount -resourceGroupName $resourceGroupName -Name $dataLakeName
-    if ($nodatalake4u -eq $false) {
+    if ($null -eq $nodatalake4u ) {
         Write-Host "No datalake with name $dataLakeName in Resource Group $resourceGroupName found. Please create by calling 'New-FatDataLake'."
         Return $null
     }
