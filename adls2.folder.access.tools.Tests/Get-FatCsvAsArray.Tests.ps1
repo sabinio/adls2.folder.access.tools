@@ -7,6 +7,8 @@ BeforeAll {
     Get-Module adls2.folder.access.tools | remove-module
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)
     Import-Module $CommandNamePath -Force
+    $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Private/Test-FatCsvHeaders.ps1)
+    Import-Module $CommandNamePath -Force
 }
 
 Describe "Get-FatCsvAsArray" -Tag 'Unit' {
