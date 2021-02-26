@@ -46,7 +46,7 @@ if (-not ((get-module Pipeline.Tools -Verbose:$VerbosePreference).Version -eq $L
 
 #Powershell Get needs to be first otherwise it gets loaded by use of import-module
 $Modules = `
-@{Module = "Az.Storage"; RequiredVersion = 3.2.0 }, `
+@{Module = "Az.Storage"; RequiredVersion = "3.2.0" }, `
 @{Module = "Az.DataLakeStore"; Version = 1.2.8 }
 $Modules  | ForEach-Object { Install-PsModuleFast @_ -Verbose:$VerbosePreference }
 
