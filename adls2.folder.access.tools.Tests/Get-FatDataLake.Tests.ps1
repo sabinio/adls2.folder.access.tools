@@ -21,6 +21,3 @@ Describe "Get-FatDataLake" -Tag 'Unit' {
         }
     }
 }
-
-
-

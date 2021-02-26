@@ -4,7 +4,8 @@ Function Get-FatCsvAsArray {
         [parameter(Mandatory = $false)] [switch]$RecurseOnly
     )
     $csvPath = Resolve-Path $csvPath
-    $myCsv = import-csv $csvPath
+    Test-FatCsvHeaders -csvPath $csvPath
+    $myCsv = Import-Csv $csvPath
     If ($PSBoundParameters.ContainsKey('RecurseOnly')) {
         $myCsv = $myCsv | Where-Object -Property Recurse -eq "True" | Group-Object Container, Folder, Recurse | ForEach-Object { [pscustomobject]@{Container = $_.Name.split(",")[0].Trim(); Folder = $_.Name.split(",")[1].Trim(); Recurse = $_.Name.split(",")[2].Trim(); Items = $_.Group } }
     }
