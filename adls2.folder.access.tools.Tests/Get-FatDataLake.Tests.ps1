@@ -19,5 +19,25 @@ Describe "Get-FatDataLake" -Tag 'Unit' {
             $testresult | Should -Be $null
             Assert-MockCalled Test-AzDataLakeStoreAccount -Exactly 1
         }
+
+        It "DataLake does not exist" {
+            Mock Test-AzDataLakeStoreAccount {
+                $result = "exists"
+                Return $result
+            }
+
+            Mock Get-AzDataLakeStoreAccount{
+                $result = "exists"
+                Return $result
+            }
+            $resourcegroupname = "resourcegroupname"
+            $datalakename = "datalakename"
+            $testresult =  Get-FatDataLake -resourceGroupName $resourcegroupname -dataLakeName $datalakename 
+            $testresult | Should -BeExactly "exists"
+            Assert-MockCalled Test-AzDataLakeStoreAccount -Exactly 1
+            Assert-MockCalled Get-AzDataLakeStoreAccount -Exactly 1
+        }
+
     }
 }
+
