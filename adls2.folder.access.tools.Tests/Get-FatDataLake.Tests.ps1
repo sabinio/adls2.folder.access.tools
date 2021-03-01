@@ -43,7 +43,7 @@ Describe "Get-FatDataLake" -Tag 'Integration' {
         }
 
         It "DataLake does not exist" {
-            $testresult = Get-FatDataLake -resourceGroupName $config.resourceGroupName -dataLakeName "noexist"
+            Get-FatDataLake -resourceGroupName $config.resourceGroupName -dataLakeName "noexist"
             $testresult | Should -Be $null
         }
     }
