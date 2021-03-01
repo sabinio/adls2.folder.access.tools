@@ -61,9 +61,9 @@ steps:
     inputs:
       targetType: "inline"
       script: |
-        #Install-Module Az -Scope CurrentUser -Force -Verbose -MinimumVersion 5.3.0
-        #$credential = New-Object System.Management.Automation.PSCredential ("${env:SPID}", (ConvertTo-SecureString ${env:SPKEY} -AsPlainText -Force))
-        #Connect-AzAccount -Credential $Credential -Tenant  ${env:TID} -ServicePrincipal
+        Install-Module Az -Scope CurrentUser -Force -Verbose -MinimumVersion 5.3.0
+        $credential = New-Object System.Management.Automation.PSCredential ("${env:SPID}", (ConvertTo-SecureString ${env:SPKEY} -AsPlainText -Force))
+        Connect-AzAccount -Credential $Credential -Tenant  ${env:TID} -ServicePrincipal
         Remove-Item env:\SPKEY
         Remove-Item env:\SPID
         Remove-Item env:\TID
