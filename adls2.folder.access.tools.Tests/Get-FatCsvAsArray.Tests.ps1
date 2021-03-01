@@ -16,5 +16,8 @@ Describe "Get-FatCsvAsArray" -Tag 'Unit' {
         It "Function does not throw" {
             { Get-FatCsvAsArray -csvPath $csvPath } | Should -Not -Throw
         }
+        It "Recurse only results does not throw" {
+            { Get-FatCsvAsArray -csvPath $csvPath -RecurseOnly } | Should -Not -Throw
+        }
     }
 }
