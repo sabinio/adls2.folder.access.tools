@@ -1,0 +1,4 @@
+{
+    "ResourceGroupName": "Resource group name where your Data Lake is",
+     "dataLakeName": "Name of Azure Data Lake Gen 2"
+}

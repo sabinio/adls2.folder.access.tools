@@ -4,15 +4,10 @@ Function Get-FatDataLake {
         [parameter(Mandatory = $true)][string]$resourceGroupName,
         [parameter(Mandatory = $true)][string]$dataLakeName
     )
-    $noDataLake4U = $null
-    $noDataLake4U = Test-AzDataLakeStoreAccount -resourceGroupName $resourceGroupName -Name $dataLakeName
-    if ($null -eq $nodatalake4u ) {
-        Write-Host "No datalake with name $dataLakeName in Resource Group $resourceGroupName found. Please create by calling 'New-FatDataLake'."
-        Return $null
+    Write-Verbose "Azure DataLake with the name $dataLakeName exists."
+    $DataLakeStoreAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $dataLakeName -ErrorVariable nodatalake4u
+    if ($nodatalake4u) {
+        Write-Host "No Storage Account called $dataLakeName found in Resource Group $resourceGroupName"
     }
-    else {
-        Write-Verbose "Azure DataLake with the name $dataLakeName exists."
-        $DataLakeStoreAccount = Get-AzDataLakeStoreAccount -ResourceGroupName $resourceGroupName -Name $dataLakeName
-        return $DataLakeStoreAccount
-    }
+    return $DataLakeStoreAccount
 }

@@ -28,24 +28,55 @@ steps:
       script: |
             $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
             Write-Host "##vso[build.updatebuildnumber]$BuildName"
+
   - task: PowerShell@2
-    displayName: "Powershell Pester Tests on Ubuntu Latest"
+    displayName: 'Configure Environment'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $c = @"
+        {
+            "ResourceGroupName": "$(resourceGroupName)",
+            "dataLakeName": "$(dataLakeName)"
+        }
+        "@
+        Set-Content .\config.json $c
+      pwsh: true
+      workingDirectory: 'adls2.folder.access.tools.Tests'
+
+  - task: AzureCLI@2
+    displayName: "Get Service Principal Variables"
+    inputs:
+      azureSubscription: $(azureSubscription)
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo "##vso[task.setvariable variable=spId]$servicePrincipalId"
+        echo "##vso[task.setvariable variable=spKey]$servicePrincipalKey"
+        echo "##vso[task.setvariable variable=tid]$tenantId"
+      addSpnToEnvironment: true
+
+  - task: PowerShell@2
+    displayName: "PowerShell Pester Tests "
     inputs:
       targetType: "inline"
       script: |
-          Install-Module Az.Storage -MinimumVersion 3.2.0 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
-          Import-Module Az.Storage
-          Install-Module Az.DataLakeStore -MinimumVersion 1.2.8 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
-          Import-Module Az.DataLakeStore
-          Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
-          Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
-          Set-Location "./adls2.folder.access.tools.Tests"
-          $Edition = $PSVersionTable.PSEdition
-          Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Script "./*.Tests.ps1" `
-          -OutputFile "$Edition-TestResults.xml" `
-          -OutputFormat NUnitXML `
-          -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+        #Install-Module Az -Scope CurrentUser -Force -Verbose -MinimumVersion 5.3.0
+        #$credential = New-Object System.Management.Automation.PSCredential ("${env:SPID}", (ConvertTo-SecureString ${env:SPKEY} -AsPlainText -Force))
+        #Connect-AzAccount -Credential $Credential -Tenant  ${env:TID} -ServicePrincipal
+        Remove-Item env:\SPKEY
+        Remove-Item env:\SPID
+        Remove-Item env:\TID
+        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1
+        Set-Location "./adls2.folder.access.tools.Tests"
+        $Edition = $PSVersionTable.PSEdition
+        Invoke-Pester -CodeCoverage ../adls2.folder.access.tools/P*/*.ps1 -Script "./*.Tests.ps1" `
+        -OutputFile "$Edition-TestResults.xml" `
+        -OutputFormat NUnitXML `
+        -CodeCoverageOutputFile "coverage-$Edition-results.xml"
       pwsh: true
+
 
   - task: PublishTestResults@2
     displayName: "Publish Test Results **/*-TestResults.xml"
