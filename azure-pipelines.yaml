@@ -41,8 +41,6 @@ steps:
         }
         "@
         Set-Content .\config.json $c
-        $config = (Get-Content '.\config.json' | ConvertFrom-Json)
-        Write-Host $config
       pwsh: true
       workingDirectory: 'adls2.folder.access.tools.Tests'
 

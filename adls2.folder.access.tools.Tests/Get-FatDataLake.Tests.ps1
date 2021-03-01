@@ -1,10 +1,8 @@
 param($ModulePath, $config)
-if (-not $ModulePath) {
-    $config = (Get-Content '.\config.json' | ConvertFrom-Json)
-}
 BeforeAll {
     $CommandName = 'Get-FatDataLake.ps1'
     if (-not $ModulePath) { $ModulePath = join-path (join-path $PSScriptRoot "..") "adls2.folder.access.tools" }
+    if (-not $config) {$config = (Get-Content '.\config.json' | ConvertFrom-Json)}
     Get-Module adls2.folder.access.tools | remove-module
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)
     Import-Module $CommandNamePath -Force
