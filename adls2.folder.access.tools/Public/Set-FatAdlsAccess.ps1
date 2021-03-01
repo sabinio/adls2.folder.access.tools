@@ -6,7 +6,6 @@ Function Set-FatAdlsAccess {
         [parameter(Mandatory = $true)] [string]$dataLakeStoreName,
         [parameter(Mandatory = $true)] $aclFolders,
         [parameter(Mandatory = $true)][ValidateSet('Acl', 'Permission')][string]$entryType,
-        [switch]$removeAcls,
         [switch]$WhatIf
     )
 
@@ -50,13 +49,10 @@ Function Set-FatAdlsAccess {
             Write-Host "Running WhatIf"
             $FatAdlsAclEntryOnItem.Add('WhatIf', $True)
         }
-        # i hate to add a comment but disabling until we get default permissions sorted
-        # if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
-        #     Write-Host "Removing ACL's"
-        #     $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
-        # }
-
-
+        if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
+            Write-Host "Removing ACL's"
+            $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
+        }
         Set-FatAdlsAclEntryOnItem @FatAdlsAclEntryOnItem
     }
 }
