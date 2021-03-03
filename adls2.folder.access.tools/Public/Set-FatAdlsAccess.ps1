@@ -2,7 +2,7 @@ Function Set-FatAdlsAccess {
     [CmdletBinding()]
     param(
         [parameter(Mandatory = $true)] [string]$subscriptionName,
-        [parameter(Mandatory = $true)] [string]$RGName,
+        [parameter(Mandatory = $true)] [Alias("RGName")] [string]$resourceGroupName,
         [parameter(Mandatory = $true)] [string]$dataLakeStoreName,
         [parameter(Mandatory = $true)] $aclFolders,
         [parameter(Mandatory = $true)][ValidateSet('Acl', 'Permission')][string]$entryType,
@@ -15,7 +15,7 @@ Function Set-FatAdlsAccess {
     }
     catch {
         Write-Verbose "[*] Context attempt failed. Getting context via OAuth..."
-        $storageAccount = Get-AzStorageAccount -ResourceGroupName $RGName -AccountName $dataLakeStoreName -ErrorAction Continue -ErrorVariable noauth
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -AccountName $dataLakeStoreName -ErrorAction Continue -ErrorVariable noauth
         $ctx = $storageAccount.Context
     }
     
