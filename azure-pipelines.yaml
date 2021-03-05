@@ -36,8 +36,10 @@ steps:
       script: |
         $c = @"
         {
+            "subscriptionName": "$(subscriptionName)",
             "resourceGroupName": "$(resourceGroupName)",
-            "dataLakeName": "$(dataLakeName)"
+            "dataLakeName": "$(dataLakeName)",
+            "testContainerName": "$(testContainerName)"
         }
         "@
         Set-Content .\config.json $c
