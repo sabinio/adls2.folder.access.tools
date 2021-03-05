@@ -6,6 +6,8 @@ BeforeAll {
     Get-Module adls2.folder.access.tools | remove-module -Force
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)
     Import-Module $CommandNamePath -Force
+    $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/Get-FatCsvAsArray.ps1)
+    Import-Module $CommandNamePath -Force
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Private/Set-FatAdlsAclEntryOnItem.ps1)
     Import-Module $CommandNamePath -Force
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Private/Get-FatCachedAdGroupId.ps1)
