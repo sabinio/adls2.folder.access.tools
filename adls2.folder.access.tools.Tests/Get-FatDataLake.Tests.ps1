@@ -37,7 +37,7 @@ Describe "Get-FatDataLake" -Tag 'Integration' {
     Context 'Checking data lake exists' {
         It "DataLake does exist" {
             $testresult = Get-FatDataLake -resourceGroupName $config.resourceGroupName -dataLakeName $config.dataLakeName 
-            $testresult.StorageAccountName | Should -Be "fatadls"
+            $testresult.StorageAccountName | Should -Be "fatadls2"
             $testresult.ResourceGroupName | Should -Be "fat"
             $testresult.Kind | Should -Be "StorageV2"
         }

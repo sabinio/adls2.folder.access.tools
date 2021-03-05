@@ -6,19 +6,13 @@ Function Set-FatAdlsAccess {
         [parameter(Mandatory = $true)] [string]$dataLakeStoreName,
         [parameter(Mandatory = $true)] $aclFolders,
         [parameter(Mandatory = $true)][ValidateSet('Acl', 'Permission')][string]$entryType,
+        [switch]$UseConnectedAccount,
         [switch]$WhatIf
     )
 
-    Write-Verbose "[*] Attempting via context Get-AzStorageAccount"
-    try {
-        $ctx = New-AzStorageContext -StorageAccountName $dataLakeStoreName -UseConnectedAccount -ErrorAction Continue
-    }
-    catch {
-        Write-Verbose "[*] Context attempt failed. Getting context via OAuth..."
-        $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -AccountName $dataLakeStoreName -ErrorAction Continue -ErrorVariable noauth
+        $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -AccountName $dataLakeStoreName
         $ctx = $storageAccount.Context
-    }
-    
+
     if ($null -eq $ctx) {
         Write-Error "no context."
     }
