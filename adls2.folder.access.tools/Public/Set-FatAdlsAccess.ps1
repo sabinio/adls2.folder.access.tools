@@ -9,9 +9,13 @@ Function Set-FatAdlsAccess {
         [switch]$UseConnectedAccount,
         [switch]$WhatIf
     )
-
+    if (($PSBoundParameters.ContainsKey('UseConnectedAccount')) -eq $False) {
         $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -AccountName $dataLakeStoreName
         $ctx = $storageAccount.Context
+    }
+    else{
+        $ctx = New-AzStorageContext -StorageAccountName $dataLakeStoreName -UseConnectedAccount
+    }
 
     if ($null -eq $ctx) {
         Write-Error "no context."
