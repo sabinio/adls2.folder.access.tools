@@ -10,7 +10,7 @@ Function Test-FatAADGroupsExist {
     $myCsv = import-csv $csvPath
     $ADGroupNames = $myCsv | Select-Object -ExpandProperty ADGroup -Unique
     foreach ($ADGroupName in $ADGroupNames) { 
-        Write-Host "Testing that"$ADGroupName"exists in Azure Active Directory"
+        Write-Host "Testing that"$ADGroupName" exists in Azure Active Directory"
         $ADGroupId = (Get-FatCachedAdGroupId -DisplayName $ADGroupName).Id
         $ADGroups.Add($ADGroupName, $ADGroupId)
     }

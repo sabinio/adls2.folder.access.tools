@@ -13,9 +13,13 @@ Describe "Test-FatCsvHeaders" -Tag 'Unit' {
             $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv
             {Test-FatCsvHeaders -csvPath $csvPath } | Should -Not -Throw
         }
-        It "Function does not throw" {
-            $csvPath = Join-Path $PSScriptRoot csvs/wrongheaders.csv
-            {Test-FatCsvHeaders -csvPath $csvPath} | Should -Throw 
+        It "Function does throw" {
+            $csvPath2 = Join-Path $PSScriptRoot csvs/wrongheaders.csv
+            {Test-FatCsvHeaders -csvPath $csvPath2} | Should -Throw 
+        }
+        It "Whitespace in headers" {
+            $csvPath3 = Join-Path $PSScriptRoot csvs/whitespaceheaders.csv
+            {Test-FatCsvHeaders -csvPath $csvPath3} | Should -Not -Throw 
         }
     }
 }
