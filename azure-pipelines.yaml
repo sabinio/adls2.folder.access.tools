@@ -39,7 +39,8 @@ steps:
             "subscriptionName": "$(subscriptionName)",
             "resourceGroupName": "$(resourceGroupName)",
             "dataLakeName": "$(dataLakeName)",
-            "testContainerName": "$(testContainerName)"
+            "testContainerName": "$(testContainerName)",
+            "testFolderName": "$(testFolderName)"
         }
         "@
         Set-Content .\config.json $c
