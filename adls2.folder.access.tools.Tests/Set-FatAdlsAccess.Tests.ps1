@@ -32,23 +32,37 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
     Context "Add Permission to folders" {
         It "Will Not Throw" {
             $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'pes'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'pes/ter'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+               )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" } | Should -Not -Throw
         }
     
         It "Will Not Throw" {
-            [PSCustomObject]$FolderAccess0 = @{Default = $false; Type = 'Group'; Group = 'adlsRoot'; Perms = 'rwx' }
-            [PSCustomObject]$FolderAccess1 = @{Default = $true; Type = 'Group'; Group = 'adlsRoot'; Perms = 'r-x' }
-            $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
             $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is/going'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is/going/on'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose
+        
+            $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName $config.testFolderName 
+
+            [PSCustomObject]$FolderAccess0 = @{Default = $false; Type = 'Group'; Group = 'adlsRoot'; Perms = 'rwx' }
             $zero = @{}
             $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values 
-            $compare
             $compare | Should -BeNullOrEmpty
+
+            [PSCustomObject]$FolderAccess1 = @{Default = $true; Type = 'Group'; Group = 'adlsRoot'; Perms = 'r-x' }
             $one = @{}
             $folderAccess[1].psobject.properties | ForEach-Object { $one[$_.Name] = $_.Value }
             $compare = Compare-Object $one.Values $FolderAccess1.Values 

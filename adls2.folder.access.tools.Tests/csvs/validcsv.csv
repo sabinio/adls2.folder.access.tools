@@ -1,0 +1,2 @@
+Container,Folder,ADGroup,ADGroupID,DefaultPermission,AccessPermission,Recurse
+lake,output,myadgroup,,r-x,rwx,False

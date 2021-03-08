@@ -10,16 +10,22 @@ BeforeAll {
 Describe "Test-FatCsvHeaders" -Tag 'Unit' {
     Context 'Valid Headers' {
         It "Function does not throw" {
-            $csvPath = Join-Path $PSScriptRoot csvs/dummy.csv
+            $csvPath = Join-Path $PSScriptRoot csvs/validcsv.csv
+            [pscustomobject]@{ Container = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';DefaultPermission='r-x';AccessPermission='rwx';Recurse='False'} | `
+            Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
             {Test-FatCsvHeaders -csvPath $csvPath } | Should -Not -Throw
         }
         It "Function does throw" {
-            $csvPath2 = Join-Path $PSScriptRoot csvs/wrongheaders.csv
+            $csvPath = Join-Path $PSScriptRoot csvs/wrongheaders.csv
+            [pscustomobject]@{ Container = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';IncludeInDefault='False';Recurse='False'} | `
+            Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
             {Test-FatCsvHeaders -csvPath $csvPath2} | Should -Throw 
         }
         It "Whitespace in headers" {
-            $csvPath3 = Join-Path $PSScriptRoot csvs/whitespaceheaders.csv
-            {Test-FatCsvHeaders -csvPath $csvPath3} | Should -Not -Throw 
+            $csvPath = Join-Path $PSScriptRoot csvs/whitespaceheaders.csv
+            [pscustomobject]@{ "      Container" = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';DefaultPermission='r-x';AccessPermission='rwx';Recurse='False'} | `
+            Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
+            {Test-FatCsvHeaders -csvPath $csvPath} | Should -Not -Throw 
         }
     }
 }
