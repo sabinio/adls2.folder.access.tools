@@ -1,5 +1,5 @@
 if ( $null -ne (Get-AzContext)) {
-    Write-Host "Connected to Azure."
+    Write-Host "[Helper] - Connected to Azure."
     Get-AzContext
 }
 else {
@@ -12,18 +12,36 @@ Function New-FatAzDataLakeContainer {
         [parameter(Mandatory = $true)][PSCustomObject]$ctx,
         [parameter(Mandatory = $true)][string]$ContainerName
     )
+    Write-Host "[Helper] - Checking if Container $ContainerName exists before attempting to create..."
+    $getCounter = 0
     do {
-        Start-Sleep -Seconds 2
-            $container = Get-AzStorageContainer -Context $ctx -Name $ContainerName -ErrorAction SilentlyContinue -ErrorVariable nocontainer | Out-Null
+        Start-Sleep -Seconds 3
+        $getCounter ++
+        Write-Verbose "[Helper] - Running Get-AzStorageContainer attempt $getCounter of 10..."
+        $container = Get-AzStorageContainer -Context $ctx -Name $ContainerName -ErrorAction SilentlyContinue -ErrorVariable nocontainer | Out-Null
     }
-    until ($nocontainer)
+    until ($nocontainer -or $getCounter -eq 10)
+    if ($newCounter -eq 10) {
+        Write-Error "[Helper] - Something has gone wrong in running Get-AzStorageContainer in New-FatAzDataLakeContainer"
+    }
+    Write-Host "[Helper] - Attempting to create Container $ContainerName..."
+    $newCounter = 0
     Do {
-        Start-Sleep -Seconds 2
-        $container = $null 
+        Start-Sleep -Seconds 3
+        $newCounter ++
+        if ($newCounter -gt 2) {
+            Write-Host "[Helper] - Creation failed because container is being deleted from previous test run. Re-attempt running New-AzStorageContainer $newCounter of 10 ..."
+        }
+        else {
+            Write-Verbose "[Helper] - Running New-AzStorageContainer..."
+        }
         New-AzStorageContainer -Context $ctx -Name $ContainerName -ErrorVariable container -ErrorAction SilentlyContinue
     }
     until
-    ($container.Exception.Status -ne 409 )
+    ($container.Exception.Status -ne 409 -or $newCounter -eq 10 )
+    if ($newCounter -eq 10) {
+        Write-Error "[Helper] - Something has gone wrong in running New-AzStorageContainer in New-FatAzDataLakeContainer"
+    }
 }
 
 Function Remove-FatAzDataLakeContainer {
@@ -32,11 +50,17 @@ Function Remove-FatAzDataLakeContainer {
         [parameter(Mandatory = $true)][PSCustomObject]$ctx,
         [parameter(Mandatory = $true)][string]$ContainerName
     )
+    $getCounter = 0
+    Write-Host "[Helper] - Attempting to remove Container $ContainerName..."
     Remove-AzStorageContainer -Context $ctx -Name $ContainerName -Force -ErrorAction SilentlyCOntinue | Out-Null
     do {
-        Start-Sleep -Seconds 2
-        $delete = Get-AzStorageContainer -Context $ctx -Name $ContainerName -ErrorAction SilentlyContinue -ErrorVariable nocontainer | Out-Null
-    } until ($nocontainer)
+        Write-Verbose "[Helper] - Running Get-AzStorageContainer attempt $getCounter of 10..."
+        Start-Sleep -Seconds 3
+        Get-AzStorageContainer -Context $ctx -Name $ContainerName -ErrorAction SilentlyContinue -ErrorVariable nocontainer | Out-Null
+    } until ($nocontainer -or $getCounter -eq 10 )
+    if ($getCounter -eq 10) {
+        Write-Error "[Helper] - Something has gone wrong in Remove-FatAzDataLakeContainer"
+    }
 }
 
 Function Get-FatAzContextForStorageAccount {
