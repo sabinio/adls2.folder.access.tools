@@ -40,7 +40,9 @@ steps:
             "resourceGroupName": "$(resourceGroupName)",
             "dataLakeName": "$(dataLakeName)",
             "testContainerName": "$(testContainerName)",
-            "testFolderName": "$(testFolderName)"
+            "testFolderName": "$(testFolderName)",
+            "testAADGroupName": "$(testAADGroupName)",
+            "testAADGroupId": "$(testAADGroupId)"
         }
         "@
         Set-Content .\config.json $c
