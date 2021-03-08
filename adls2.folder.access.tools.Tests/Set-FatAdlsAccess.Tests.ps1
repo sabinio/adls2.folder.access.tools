@@ -41,6 +41,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $zero = @{}
             $folderAccess[0].psobject.properties | ForEach-Object  { $zero[$_.Name] = $_.Value }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values 
+            $compare
             $compare | Should -BeNullOrEmpty
             $one = @{}
             $folderAccess[1].psobject.properties | ForEach-Object  { $one[$_.Name] = $_.Value }
