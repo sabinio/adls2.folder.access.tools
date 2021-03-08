@@ -29,27 +29,30 @@ AfterAll {
 
 
 Describe "Set-FatAdlsAccess" -Tag 'Integration' {
-    Context "Add Permission to root folder" {
+    Context "Add Permission to folders" {
         It "Will Not Throw" {
-            [PSCustomObject]$FolderAccess0 = @{Default=$false; Type='Group'; Group='adlsRoot'; Perms='rwx'}
-            [PSCustomObject]$FolderAccess1 = @{Default=$true; Type='Group'; Group='adlsRoot'; Perms='r-x'}
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" } | Should -Not -Throw
+        }
+    
+        It "Will Not Throw" {
+            [PSCustomObject]$FolderAccess0 = @{Default = $false; Type = 'Group'; Group = 'adlsRoot'; Perms = 'rwx' }
+            [PSCustomObject]$FolderAccess1 = @{Default = $true; Type = 'Group'; Group = 'adlsRoot'; Perms = 'r-x' }
             $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
             $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName $config.testFolderName 
             $zero = @{}
-            $folderAccess[0].psobject.properties | ForEach-Object  { $zero[$_.Name] = $_.Value }
+            $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values 
             $compare
             $compare | Should -BeNullOrEmpty
             $one = @{}
-            $folderAccess[1].psobject.properties | ForEach-Object  { $one[$_.Name] = $_.Value }
+            $folderAccess[1].psobject.properties | ForEach-Object { $one[$_.Name] = $_.Value }
             $compare = Compare-Object $one.Values $FolderAccess1.Values 
             $compare | Should -BeNullOrEmpty
-        }
-        It "Will Not Throw" {
-            Return
         }
     }
 }

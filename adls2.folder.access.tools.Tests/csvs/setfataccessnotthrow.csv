@@ -1,0 +1,3 @@
+Container,Folder,ADGroup,ADGroupID,DefaultPermission,AccessPermission,Recurse
+pester,pes, adlsRoot,, r-x, r-x, False
+pester,pes/ter, adlsRoot,, r-x, r-x, False
