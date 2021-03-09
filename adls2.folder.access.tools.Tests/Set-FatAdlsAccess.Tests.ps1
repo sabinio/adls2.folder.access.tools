@@ -27,7 +27,6 @@ AfterAll {
     Remove-FatAzDataLakeContainer -ctx $context -ContainerName $config.testContainerName
 }
 
-
 Describe "Set-FatAdlsAccess" -Tag 'Integration' {
     Context "Add Permission to folders" {
         It "Will Not Throw" {
@@ -41,7 +40,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" } | Should -Not -Throw
         }
     
-        It "Will Not Throw" {
+        It "Access List on Folder is as expected" {
             $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
             $csvEntries = @(
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
@@ -56,17 +55,33 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName $config.testFolderName 
 
-            [PSCustomObject]$FolderAccess0 = @{Default = $false; Type = 'Group'; Group = 'adlsRoot'; Perms = 'rwx' }
+            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsRoot'; Perms = 'rwx'; Type = 'Group'; Default = $false}
             $zero = @{}
-            $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
+            $folderAccess[0].psobject.properties | ForEach-Object {$zero[$_.Name] = $_.Value}
             $compare = Compare-Object $zero.Values $FolderAccess0.Values 
             $compare | Should -BeNullOrEmpty
-
-            [PSCustomObject]$FolderAccess1 = @{Default = $true; Type = 'Group'; Group = 'adlsRoot'; Perms = 'r-x' }
+            [PSCustomObject]$FolderAccess1 = @{Group = 'adlsRoot'; Perms = 'r-x'; Type = 'Group'; Default = $true}
             $one = @{}
-            $folderAccess[1].psobject.properties | ForEach-Object { $one[$_.Name] = $_.Value }
+            $folderAccess[1].psobject.properties | ForEach-Object {$one[$_.Name] = $_.Value}
             $compare = Compare-Object $one.Values $FolderAccess1.Values 
             $compare | Should -BeNullOrEmpty
+        }
+
+        It "Access List on Folder is as expected" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes/no'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes/no/changes'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose -whatif
+        
+            $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'whatif/makes/no/changes' 
+            $folderAccess | Should -BeNullOrEmpty
         }
     }
 }

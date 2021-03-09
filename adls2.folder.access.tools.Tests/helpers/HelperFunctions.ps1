@@ -29,7 +29,7 @@ Function New-FatAzDataLakeContainer {
     Do {
         Start-Sleep -Seconds 3
         $newCounter ++
-        if ($newCounter -gt 2) {
+        if ($newCounter -gt 1) {
             Write-Host "[Helper] - Creation failed because container is being deleted from previous test run. Re-attempt running New-AzStorageContainer $newCounter of 10 ..."
         }
         else {
