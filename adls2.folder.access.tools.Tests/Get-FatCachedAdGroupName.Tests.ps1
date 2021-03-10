@@ -22,6 +22,11 @@ Describe "Get-FatCachedAdGroupName" -Tag 'Unit' {
             $groupName.DisplayName -eq "FakeGroup"
             Assert-MockCalled Get-AzADGroup -Exactly 1
         }
+    }
+}
+
+Describe "Get-FatCachedAdGroupName" -Tag 'Integration' {
+    Context 'Get' {
         It "Group Exists" {
             $groupName = Get-FatCachedAdGroupName -objectId $config.testAADGroupId
             $groupName.DisplayName -eq $config.testAADGroupName
