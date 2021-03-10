@@ -3,4 +3,4 @@
 config.json
 
 
-\adls2.folder.access.tools.Tests\csvs\*.csv
+adls2.folder.access.tools.Tests/csvs/*.csv

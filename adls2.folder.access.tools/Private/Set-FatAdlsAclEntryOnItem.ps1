@@ -10,58 +10,44 @@ Function Set-FatAdlsAclEntryOnItem {
 
     $ErrorActionPreference = "Stop"
     try {
-        Write-Host "[*] Setting the ACLs for $($aclEntry.container) $($aclEntry.folder)"  -NoNewLine
+        Write-Host "Setting the ACLs for $($aclEntry.container) $($aclEntry.folder)"
 
         $Gen2Item = Get-AzDataLakeGen2Item -Context $ctx -FileSystem $AclEntry.container -Path $aclEntry.folder
         Write-Verbose "Owner = $($Gen2Item.Owner)"
         $aclList = [Collections.Generic.List[System.Object]]($Gen2Item.ACL)
         Write-Verbose "Current Acl"
         Write-Verbose ($aclList | Where-Object { @("User", "Group") -contains $_.AccessControlType -and $null -ne $_.EntityId } | `
-        ForEach-Object { 
-            $ADGroup = Get-FatCachedAdGroupName -ObjectId $_.EntityId
-            $ADGroupDisplayName = $ADGroup.DisplayName
+                ForEach-Object { 
+                $ADGroup = Get-FatCachedAdGroupName -ObjectId $_.EntityId
+                $ADGroupDisplayName = $ADGroup.DisplayName
                 [PSCustomObject]@{Default = $_.DefaultScope;
-                    Type = $_.AccessControlType;
-                    EntityId = $_.EntityId; 
-                    Group = $ADGroupDisplayName; 
-                    Perms = $_.GetSymbolicRolePermissions()
+                    Type                  = $_.AccessControlType;
+                    EntityId              = $_.EntityId; 
+                    Group                 = $ADGroupDisplayName; 
+                    Perms                 = $_.GetSymbolicRolePermissions()
                 } 
-            } | Format-Table | out-string  )
+            } | Format-Table | Out-String  )
         Write-Verbose "ACL Entry $($aclEntry.Items.Count)"
-        Write-Verbose ($aclEntry.Items | Format-Table | out-string)
-        
+
         if ($removeAcls) {
-            Write-Verbose "[***] Checking Acls to remove"
             for ($i = $aclList.Count; $i -gt 0; $i-- ) {
                 $currentAcl = $aclList[$i]
                 if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
                     $ADGroup = Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId
-                    Write-Verbose "Looking for Acl for $($currentAcl.EntityId) $($ADGroup.DisplayName) $($currentAcl.DefaultScope)"
-
-                    $matchingAcls = @($AclEntry.Items | Where-Object { $AdGroup.DisplayName -eq $_.ADGroup })
-                    Write-Verbose "Acls matching on Group $($matchingACls.Count)"
-                    if ($matchingACls.Count -gt 1) {
-                        if ($currentAcl.DefaultScope) {
-                            $matchingACls = @($matchingACls | Where-Object { $null -ne $_.DefaultPermission })
-                        } 
-                        else {
-                            $matchingACls = @($matchingACls | Where-Object { $null -ne $_.AccessPermission })
-                        } 
-                        Write-Verbose "Acls matching on Scope $($matchingACls.Count)"
-                    }
- 
-                    if ($matchingAcls.Count -eq 0) {
-                        Write-Output "[*] Removing acl for Group $($ADGroup.DisplayName) from $($AclEntry.Folder)"
+                    Write-Verbose "Checking `$ACLEntry for $($currentAcl.EntityId) $($ADGroup.DisplayName)"
+                    $matchingACls = @($AclEntry.Items | Where-Object { $AdGroup.DisplayName -eq $_.ADGroup })
+                    if ($matchingACls.Count -eq 0 ) {
+                        Write-Verbose "AclList count = $($aclList.Count)"
+                        Write-Host "Removing acl for Group $($ADGroup.DisplayName) from $($AclEntry.Folder)"
                         $aclList.RemoveAt($i) | out-null;
                         Write-Verbose "AclList count = $($aclList.Count)"
                     }
                 }
             }
         }
-        else { Write-Verbose "Removing Acls set to $false skipping removing of extra acls " }
         
         Write-Verbose "AclList count = $($aclList.Count)"
-        Write-Verbose "[***] Checking Acls to Add"
+        Write-Host "Checking Acls to Add..."
 
         foreach ( $acl in $aclEntry.Items) { 
             Write-Verbose ($acl | Format-Table | Out-String)
@@ -69,7 +55,7 @@ Function Set-FatAdlsAclEntryOnItem {
                 $ADGroupId = $acl.ADGroupId
             }
             else {
-                Write-Verbose "[*] Getting the GroupId from AAD"
+                Write-Verbose "Getting the GroupId from AAD"
                 $ADGroup = Get-FatCachedAdGroupId -DisplayName $acl.ADGroup
                 $ADGroupId = $ADGroup.Id
             }
@@ -80,7 +66,8 @@ Function Set-FatAdlsAclEntryOnItem {
                 Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
             }
             if ( -not [string]::IsNullOrWhitespace($acl.AccessPermission)) {
-                Write-Verbose "Adding Access Acl $($acl.AccessPermission) for $AdGroupId  ($($acl.AdGroup))"
+                $aclCountBefore = $aclList.Count
+                Write-Verbose "Adding Access Acl $($acl.AccessPermission) for $AdGroupId ($($acl.AdGroup))"
                 $aclList = set-AzDataLakeGen2ItemAclObject -AccessControlType group -EntityID $AdGroupId  -Permission $acl.AccessPermission -InputObject $aclList
                 Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
             }
@@ -94,7 +81,7 @@ Function Set-FatAdlsAclEntryOnItem {
             if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
                 if ($currentAcl.GetSymbolicRolePermissions() -eq '---') {
                     Write-Verbose "Removing --- $((Get-FatCachedAdGroupName -ObjectId $currentAcl.EntityId).DisplayName) $($currentAcl.DefaultScope)"
-                    $aclList.RemoveAt($i) | out-null;    
+                    $aclList.RemoveAt($i) | Out-Null;    
                 }
             }
         }
@@ -104,17 +91,17 @@ Function Set-FatAdlsAclEntryOnItem {
                     Type = $_.AccessControlType;
                     EntityId = $_.EntityId; Group = (Get-FatCachedAdGroupName -ObjectId $_.EntityId).DisplayName; Perms = $_.GetSymbolicRolePermissions()
                 } 
-            } | Format-Table | out-string  )
+            } | Format-Table | Out-String  )
         $Comparison = Compare-Object  $Gen2Item.ACL $aclList -property "EntityId", "Permissions", "AccessControlType", "DefaultScope"
         if ($null -ne $Comparison) {
-            write-Host " - Changes $($Comparison.Count)"
-            write-Host "<= to be removed, => to be set "
-            $Comparison | ForEach-Object { [pscustomObject]@{Permissions = $_.Permissions;
+            Write-Host " - Changes to ACLs on $($AclEntry.folder) $($Comparison.Count)"
+            Write-Host "<= to be removed, => to be set "
+            Write-Host ($Comparison | ForEach-Object { [pscustomObject]@{Permissions = $_.Permissions;
                     Default                                              = $_.DefaultScope;
                     Type                                                 = $_.AccessControlType;
                     Group                                                = (Get-FatCachedAdGroupName -objectId $_.EntityId).DisplayName;
                     Change                                               = $_.SideIndicator
-                } } | Format-Table Group, Type, Default, Permissions, Change
+                } } | Format-Table Group, Type, Default, Permissions, Change | Out-String)
 
             $UpdateParams = @{
                 Context    = $ctx;
@@ -131,7 +118,7 @@ Function Set-FatAdlsAclEntryOnItem {
         
             if ($aclEntry.recurse -eq "True") {
                 try {
-                    Write-Verbose "[**] Updating $($AclEntry.folder) recursively..."
+                    Write-Verbose "Updating $($AclEntry.folder) recursively..."
                     $RecurseParams = @{
                         Context    = $ctx;
                         FileSystem = $AclEntry.Container;
@@ -143,7 +130,6 @@ Function Set-FatAdlsAclEntryOnItem {
                         Write-Host "Running WhatIf"
                         $RecurseParams.Add('WhatIf', $True)
                     }
-                    Write-Host "Importing ModuleAz.Storage.."
                     Update-AzDataLakeGen2AclRecursive @RecurseParams
                 }
                 catch {
@@ -158,10 +144,7 @@ Function Set-FatAdlsAclEntryOnItem {
         }
     }
     catch {
-        Write-Host "Hello"
         Write-Error $_
-        
         Throw
     }
-    
 }
