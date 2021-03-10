@@ -45,8 +45,7 @@ Function Set-FatAdlsAclEntryOnItem {
                 }
             }
         }
-        
-        Write-Verbose "AclList count = $($aclList.Count)"
+
         Write-Host "Checking Acls to Add..."
 
         foreach ( $acl in $aclEntry.Items) { 

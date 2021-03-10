@@ -34,10 +34,42 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $csvEntries = @(
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/ter/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
-               )
+            )
             $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" } | Should -Not -Throw
+        }
+
+        It "UseConnectedAccount Will Not Throw" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/ter/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            Mock New-AzStorageContext {
+                $ctx = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
+                return $ctx
+            }
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -UseConnectedAccount } | Should -Not -Throw
+            Assert-MockCalled New-AzStorageContext -Exactly 1
+        }
+
+        It "no context will throw" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = '/pes/ter/'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            Mock New-AzStorageContext {
+                $ctx = $null
+                return $ctx
+            }
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -UseConnectedAccount } | Should -Throw
+            Assert-MockCalled New-AzStorageContext -Exactly 1
         }
     
         It "Access List on Folder is as expected" {
@@ -47,7 +79,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is/going'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'what/is/going/on'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
-                )
+            )
             $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose
@@ -55,14 +87,14 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName $config.testFolderName 
 
-            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsRoot'; Perms = 'rwx'; Type = 'Group'; Default = $false}
+            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsRoot'; Perms = 'rwx'; Type = 'Group'; Default = $false }
             $zero = @{}
-            $folderAccess[0].psobject.properties | ForEach-Object {$zero[$_.Name] = $_.Value}
+            $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
-            [PSCustomObject]$FolderAccess1 = @{Group = 'adlsRoot'; Perms = 'r-x'; Type = 'Group'; Default = $true}
+            [PSCustomObject]$FolderAccess1 = @{Group = 'adlsRoot'; Perms = 'r-x'; Type = 'Group'; Default = $true }
             $one = @{}
-            $folderAccess[1].psobject.properties | ForEach-Object {$one[$_.Name] = $_.Value}
+            $folderAccess[1].psobject.properties | ForEach-Object { $one[$_.Name] = $_.Value }
             $compare = Compare-Object $one.Values $FolderAccess1.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
         }
@@ -74,7 +106,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes/no'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
                 [pscustomobject]@{ Container = $config.testContainerName; Folder = 'whatif/makes/no/changes'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
-                )
+            )
             $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
             $csv = Get-FatCsvAsArray -csvPath $csvPath
             Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose -whatif
@@ -113,7 +145,6 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $compare | Should -BeNullOrEmpty
 
         }
-
         
         It "Access List on Folder is as expected after re-running same csv but with removeacls included" {
             $csvPath = Join-Path $PSScriptRoot csvs/setfataccessremove.csv
@@ -178,14 +209,50 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
 
             $zero = @{}
             $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
-            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsOutput'; Perms = 'rwx'; Type = 'Group'; Default = $false}
+            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsOutput'; Perms = 'rwx'; Type = 'Group'; Default = $false }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
+        }
+
+        It "Mock Query AAD for ACL ID as not provided in CSV" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'query'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'query/for'; ADGroup = $config.testAADGroupName; ADGroupID = ''; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'query/for/acl'; ADGroup = $config.testAADGroupName; ADGroupID = ''; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+            )
+            Mock Get-FatCachedAdGroupId {
+                Return @{Id = $config.testAADGroupId }
+            }
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose } | Should -Not -Throw
+            Assert-MockCalled Get-FatCachedAdGroupId -Exactly 2
+        }
+
+        It "Mock Update ACls Recursively" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccess.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'update'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'True' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'update'; ADGroup = $config.testAADGroupName2; ADGroupID = $config.testAADGroupId2; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'True' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'update/recursively'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'rwx'; AccessPermission = 'rwx'; Recurse = 'True' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'update/recursively'; ADGroup = $config.testAADGroupName2; ADGroupID = $config.testAADGroupId2; DefaultPermission = 'rwx'; AccessPermission = 'rwx'; Recurse = 'True' }
+            
+                )
+            Mock Update-AzDataLakeGen2AclRecursive {
+                Return
+            }
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            { Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose } | Should -Not -Throw
+            Assert-MockCalled Update-AzDataLakeGen2AclRecursive -Exactly 2
         }
     }
 }
 
-# 3 tests to add
+# tests to add - 
+
+#update recursively without mock
 
 #two groups on one folder; remove one group and set removeacls; group should be removed
 

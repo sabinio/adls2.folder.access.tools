@@ -16,10 +16,14 @@ Describe "Test-FatCsvHeaders" -Tag 'Unit' {
             {Test-FatCsvHeaders -csvPath $csvPath } | Should -Not -Throw
         }
         It "Function does throw" {
+            Mock Write-Host {
+                Return
+            }
             $csvPath = Join-Path $PSScriptRoot csvs/wrongheaders.csv
             [pscustomobject]@{ Container = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';IncludeInDefault='False';Recurse='False'} | `
             Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
-            {Test-FatCsvHeaders -csvPath $csvPath2} | Should -Throw 
+            {Test-FatCsvHeaders -csvPath $csvPath} | Should -Throw 
+            Assert-MockCalled Write-Host -Exactly 1
         }
         It "Whitespace in headers" {
             $csvPath = Join-Path $PSScriptRoot csvs/whitespaceheaders.csv
