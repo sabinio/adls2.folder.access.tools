@@ -15,7 +15,18 @@ Describe "Test-FatCsvHeaders" -Tag 'Unit' {
             Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
             {Test-FatCsvHeaders -csvPath $csvPath } | Should -Not -Throw
         }
-        It "Function does throw" {
+        It "Function does throw; headers do not match" {
+            Mock Write-Host {
+                Return
+            }
+            $csvPath = Join-Path $PSScriptRoot csvs/wrongheaders.csv
+            [pscustomobject]@{ Contrainer = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';DefaultPermission='r-x';AccessPermission='rwx';Recurse='False'} | `
+            Export-Csv -Path  $csvPath -NoTypeInformation -UseQuotes Never
+            {Test-FatCsvHeaders -csvPath $csvPath} | Should -Throw 
+            Assert-MockCalled Write-Host -Exactly 1
+        }
+
+        It "Function does throw; less than 7 headers" {
             Mock Write-Host {
                 Return
             }
@@ -25,6 +36,7 @@ Describe "Test-FatCsvHeaders" -Tag 'Unit' {
             {Test-FatCsvHeaders -csvPath $csvPath} | Should -Throw 
             Assert-MockCalled Write-Host -Exactly 1
         }
+
         It "Whitespace in headers" {
             $csvPath = Join-Path $PSScriptRoot csvs/whitespaceheaders.csv
             [pscustomobject]@{ "      Container" = 'lake';Folder = 'output';ADGroup='myadgroup';ADGroupID='';DefaultPermission='r-x';AccessPermission='rwx';Recurse='False'} | `
