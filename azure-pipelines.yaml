@@ -42,7 +42,9 @@ steps:
             "testContainerName": "$(testContainerName)",
             "testFolderName": "$(testFolderName)",
             "testAADGroupName": "$(testAADGroupName)",
-            "testAADGroupId": "$(testAADGroupId)"
+            "testAADGroupId": "$(testAADGroupId)",
+            "testAADGroupName2": "$(testAADGroupName2)",
+            "testAADGroupId2": "$(testAADGroupId2)"
         }
         "@
         Set-Content .\config.json $c
