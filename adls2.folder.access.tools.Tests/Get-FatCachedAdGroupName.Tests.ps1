@@ -29,7 +29,7 @@ Describe "Get-FatCachedAdGroupName" -Tag 'Integration' {
     Context 'Get' {
         It "Group Exists" {
             $groupName = Get-FatCachedAdGroupName -objectId $config.testAADGroupId
-            $groupName.DisplayName -eq $config.testAADGroupName
+            $groupName.DisplayName | Should -BeExactly $config.testAADGroupName
         }
     }
 }
