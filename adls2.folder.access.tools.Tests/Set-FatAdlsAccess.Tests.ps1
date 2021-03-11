@@ -371,12 +371,96 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
     Context "Removing Groups Permissions" {
 
         It "two groups on one folder; remove one group and set removeacls; group should be removed" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'addgroup'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'addgroup/thenremove'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'addgroup/thenremove'; ADGroup = $config.testAADGroupName2; ADGroupID = $config.testAADGroupId2; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl"
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'addgroup/thenremove' 
+            $folderAccess.Length | Should -BeExactly 4
+
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'addgroup'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'addgroup/thenremove'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -removeacls
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'addgroup/thenremove' 
+            $folderAccess.Length | Should -BeExactly 2
         }
         
         It "one group on one folder; remove folder entry; should still be on acl" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'group'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'group/thenremove'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl"
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'group/thenremove' 
+            $folderAccess.Length | Should -BeExactly 2
+
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'group'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -removeacls
+            $folderAccessAfter = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'group/thenremove' 
+            $folderAccessAfter.Length | Should -BeExactly 2
+            $folderAccessAfter | Should -Match $folderAccess
         }
         
-        It "remove group by using ---; remove from csv; run again and should be deleted" {
+        It "remove group by using ---;" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep/removalprocess'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'rwx'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl"
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'twostep/removalprocess' 
+            $folderAccess.Length | Should -BeExactly 2
+
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep/removalprocess'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = '---'; AccessPermission = '---'; Recurse = 'False' }    
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -removeacls
+            $folderAccessAfter = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'twostep/removalprocess' 
+            $folderAccessAfter | Should -BeNullOrEmpty
+        }
+
+        It "remove group by using --- even without removeacl switch;" {
+            $csvPath = Join-Path $PSScriptRoot csvs/setfataccessnotthrow.csv
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'twostep/removalprocess'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'rwx'; AccessPermission = 'rwx'; Recurse = 'False' }
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl"
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'twostep/removalprocess' 
+            $folderAccess.Length | Should -BeExactly 2
+
+            $csvEntries = @(
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'ttwostep'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = 'r-x'; AccessPermission = 'r-x'; Recurse = 'False' }
+                [pscustomobject]@{ Container = $config.testContainerName; Folder = 'ttwostep/removalprocess'; ADGroup = $config.testAADGroupName; ADGroupID = $config.testAADGroupId; DefaultPermission = '---'; AccessPermission = '---'; Recurse = 'False' }    
+            )
+            $csvEntries | Export-Csv -Path $csvpath -UseQuotes Never
+            $csv = Get-FatCsvAsArray -csvPath $csvPath
+            Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl"
+            $folderAccessAfter = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'ttwostep/removalprocess' 
+            $folderAccessAfter | Should -BeNullOrEmpty
         }
     }
 }
