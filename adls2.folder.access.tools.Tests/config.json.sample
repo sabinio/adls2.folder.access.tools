@@ -1,4 +1,9 @@
 {
     "ResourceGroupName": "Resource group name where your Data Lake is",
-     "dataLakeName": "Name of Azure Data Lake Gen 2"
+    "dataLakeName": "Name of Azure Data Lake Gen 2. Needs to exist."
+    "testContainerName": "container that is going to be created on datalake",
+    "testAADGroupName":"first of two groups that need to exist in tenant for testing",
+    "testAADGroupId":"group/entity id of group testAADGroupName",
+    "testAADGroupName2":"second of two groups that need to exist in tenant for testing",
+    "testAADGroupId2":"group/entity id of group testAADGroupName2"
 }

@@ -53,7 +53,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             Set-FatAdlsAccess -subscriptionName $config.subscriptionName -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName -aclFolders $csv -entryType "acl" -Verbose
         
             $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
-            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName $config.testFolderName 
+            $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName "what/is/going/on"
 
             [PSCustomObject]$FolderAccess0 = @{Group = 'adlsRoot'; Perms = 'rwx'; Type = 'Group'; Default = $false }
             $zero = @{}

@@ -40,7 +40,6 @@ steps:
             "resourceGroupName": "$(resourceGroupName)",
             "dataLakeName": "$(dataLakeName)",
             "testContainerName": "$(testContainerName)",
-            "testFolderName": "$(testFolderName)",
             "testAADGroupName": "$(testAADGroupName)",
             "testAADGroupId": "$(testAADGroupId)",
             "testAADGroupName2": "$(testAADGroupName2)",
