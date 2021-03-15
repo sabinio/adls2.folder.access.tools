@@ -30,6 +30,7 @@ Function Set-FatAdlsAclEntryOnItem {
         Write-Verbose "ACL Entry $($aclEntry.Items.Count)"
 
         if ($removeAcls) {
+            Write-Host "Checking Acls to Remove..."
             for ($i = $aclList.Count; $i -gt 0; $i-- ) {
                 $currentAcl = $aclList[$i]
                 if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
@@ -73,9 +74,8 @@ Function Set-FatAdlsAclEntryOnItem {
         }
      
         $aclList = [Collections.Generic.List[System.Object]]($aclList)
-
+        Write-Verbose "Checking for --- permissions. If any are found they will be removed."
         for ($i = $aclList.Count - 1; $i -gt 0; $i-- ) {
-            Write-Verbose "Checking for --- permissions $i"
             $currentAcl = $aclList[$i]
             if (@("User", "Group") -contains $currentAcl.AccessControlType -and $null -ne $currentAcl.EntityId) {
                 if ($currentAcl.GetSymbolicRolePermissions() -eq '---') {
@@ -110,7 +110,7 @@ Function Set-FatAdlsAclEntryOnItem {
                 verbose    = $VerbosePreference;
             }
             if (($PSBoundParameters.ContainsKey('WhatIf')) -eq $True) {
-                Write-Host "Running WhatIf"
+                Write-Verbose "Running WhatIf"
                 $UpdateParams.Add('WhatIf', $True)
             }
             Update-AzDataLakeGen2Item @UpdateParams | Out-null
@@ -126,7 +126,7 @@ Function Set-FatAdlsAclEntryOnItem {
                         verbose    = $VerbosePreference;
                     }
                     if (($PSBoundParameters.ContainsKey('WhatIf')) -eq $True) {
-                        Write-Host "Running WhatIf"
+                        Write-Verbose "Running WhatIf"
                         $RecurseParams.Add('WhatIf', $True)
                     }
                     Update-AzDataLakeGen2AclRecursive @RecurseParams
