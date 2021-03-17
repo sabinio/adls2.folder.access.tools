@@ -1,0 +1,25 @@
+#!/bin/sh
+
+th_output=$( trufflehog3 --config trufflehog.yml --no-history --format text .)
+
+if [ "${th_output}" != "" ]; then
+  echo "${th_output}"
+  cat << 'EOM'
+ _______________________________________
+/ COMMIT FAILED: trufflehog identified  \
+| potential secrets in the repo. Either |
+| clean these up or add them to the     |
+\ exclusions list in trufflehog.yml    /
+ ---------------------------------------
+  \
+   \   \_\_    _/_/
+    \      \__/
+           (oo)\_______
+           (__)\       )\/\
+               ||----w |
+               ||     ||
+EOM
+  exit 1
+else
+  exit 0
+fi
