@@ -1,0 +1,22 @@
+skip_strings:
+  # these are literal strings, not regexes
+  # strings in key '/' will be skipped in all files; 
+  # there needs to be at least one member in this list for our script to work
+  # this one is a dummy, you can delete it if you have some "real" false positive to add
+  /:
+    - dummy
+
+
+
+skip_paths:
+# these are regexes, not minmatch paths. Don't delete these unless you're sure you don't need them.
+  - .*.md5
+  - .*.sha1
+  - found_secrets.txt
+  - env
+
+
+
+no_regex: false
+no_entropy: false
+no_history: false
