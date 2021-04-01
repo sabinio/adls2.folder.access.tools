@@ -6,6 +6,8 @@ BeforeAll {
     Get-Module adls2.folder.access.tools | remove-module
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Public/$CommandName)
     Import-Module $CommandNamePath -Force
+    $helpers = join-path $PSScriptRoot helpers\HelperFunctions.ps1
+    Import-Module $helpers -Force
 }
 Describe "Get-FatDataLake" -Tag 'Unit' {
     Context 'Checking data lake exists' {

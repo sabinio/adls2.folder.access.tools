@@ -7,6 +7,7 @@ Function Set-FatAdlsAccess {
         [parameter(Mandatory = $true)] $aclFolders,
         [parameter(Mandatory = $true)][ValidateSet('Acl', 'Permission')][string]$entryType,
         [switch]$UseConnectedAccount,
+        [switch]$removeAcls,
         [switch]$WhatIf
     )
     if (($PSBoundParameters.ContainsKey('UseConnectedAccount')) -eq $False) {
@@ -20,10 +21,18 @@ Function Set-FatAdlsAccess {
     if ($null -eq $ctx) {
         Write-Error "no context."
     }
+
+    if (($PSBoundParameters.ContainsKey('WhatIf')) -eq $True) {
+        Write-Verbose "Running WhatIf"
+    }
+    if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
+        Write-Verbose "Removing ACL's set to true"
+    }
     Write-Verbose "Azure DataLake Store Name: $dataLakeStoreName"
     $ErrorActionPreference = "Stop"
 
     foreach ($folder in $aclFolders) {
+        $folder.Folder = $folder.Folder.Trim("/")
         Write-Verbose "[*] Checking if $($folder.Folder) exists in container $($folder.Container)..."
 
         if (-Not (Get-AzDataLakeGen2Item -context $ctx -FileSystem $folder.Container -Path $folder.Folder -ErrorAction "SilentlyContinue")) {
@@ -44,11 +53,9 @@ Function Set-FatAdlsAccess {
             aclEntry          = $folder;
         }
         if (($PSBoundParameters.ContainsKey('WhatIf')) -eq $True) {
-            Write-Host "Running WhatIf"
             $FatAdlsAclEntryOnItem.Add('WhatIf', $True)
         }
         if (($PSBoundParameters.ContainsKey('removeAcls')) -eq $True) {
-            Write-Host "Removing ACL's"
             $FatAdlsAclEntryOnItem.Add('removeAcls', $True)
         }
         Set-FatAdlsAclEntryOnItem @FatAdlsAclEntryOnItem

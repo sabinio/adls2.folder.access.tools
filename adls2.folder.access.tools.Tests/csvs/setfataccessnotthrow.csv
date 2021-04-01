@@ -1,0 +1,3 @@
+Container,Folder,ADGroup,ADGroupID,DefaultPermission,AccessPermission,Recurse
+pester,ttwostep,adlsRoot,80024941-9710-47d2-8be9-f06f4389620f,r-x,r-x,False
+pester,ttwostep/removalprocess,adlsRoot,80024941-9710-47d2-8be9-f06f4389620f,---,---,False

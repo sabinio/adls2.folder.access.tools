@@ -1,3 +1,6 @@
 *Results.xml
 *results.xml
 config.json
+
+
+adls2.folder.access.tools.Tests/csvs/*.csv

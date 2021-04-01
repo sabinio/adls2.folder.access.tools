@@ -1,5 +1,5 @@
 Container,Folder,ADGroup,ADGroupID,DefaultPermission,AccessPermission,Recurse
-pester,what, adlsRoot,, r-x, r-x, False
-pester,what/is, adlsRoot,, r-x, r-x, False
-pester,what/is/going, adlsRoot,, r-x, r-x, False
-pester,what/is/going/on, adlsRoot,, r-x, rwx, False
+pester,update,adlsRoot,80024941-9710-47d2-8be9-f06f4389620f,r-x,r-x,True
+pester,update,adlsOutput,16050cad-cf12-4c2d-9ba8-57a7553184a5,r-x,r-x,True
+pester,update/recursively,adlsRoot,80024941-9710-47d2-8be9-f06f4389620f,rwx,rwx,True
+pester,update/recursively,adlsOutput,16050cad-cf12-4c2d-9ba8-57a7553184a5,rwx,rwx,True

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
 <metadata>
 <id>adls2.folder.access.tools</id>
-<version>1.0.0.0</version>
+<version>0.0.0.1</version>
 <authors>Richie Lee</authors>
 <description>Set users permissions to folders on a Data Lake; permisions are set in a csv.</description>
 </metadata>
@@ -12,15 +12,11 @@
 <file src="..\README.md"/>
 <file src="Private\Get-FatCachedAdGroupId.ps1" target="Private"/>
 <file src="Private\Get-FatCachedAdGroupName.ps1" target="Private"/>
-<file src="Private\GetFatAdlsAclItemEntry.ps1" target="Private"/>
-<file src="Private\GetFatAdlsFolderPermissions.ps1" target="Private"/>
-<file src="Private\SetFatAdlsAclEntryInCsv.ps1" target="Private"/>
-<file src="Private\SetFatAdlsAclEntryOnItem.ps1" target="Private"/>
-<file src="Public\Get-FatAzConnection.ps1" target="Public"/>
-<file src="Public\GetFatAdlsAccessIntoCsv.ps1" target="Public"/>
-<file src="Public\GetFatCsvAsArray.ps1" target="Public"/>
-<file src="Public\GetFatDataLake.ps1" target="Public"/>
-<file src="Public\NewFatDataLake.ps1" target="Public"/>
-<file src="Public\SetFatAdlsAccess.ps1" target="Public"/>
+<file src="Private\Set-FatAdlsAclEntryOnItem.ps1" target="Private"/>
+<file src="Private\Test-FatCsvHeaders.ps1" target="Private"/>
+<file src="Public\Get-FatCsvAsArray.ps1" target="Public"/>
+<file src="Public\Get-FatDataLake.ps1" target="Public"/>
+<file src="Public\Set-FatAdlsAccess.ps1" target="Public"/>
+<file src="Public\Test-FatAADGroupsExists.ps1" target="Public"/>
 </files>
 </package>
