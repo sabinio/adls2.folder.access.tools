@@ -61,8 +61,11 @@ Function Set-FatAdlsAclEntryOnItem {
                     $ADGroupId = $.CountADGroup.Id
                 }
                 else{
-                    Write-Host "$($AdGroup.Count) entries found for group ($($acl.ADGroup)), this entry will be ignored. To pick one of the groups specify the ADGroupId in the Acl entry"
-                    $AdGroupId = $null
+                    Write-Host "$($AdGroup.Count) entries found for group ($($acl.ADGroup)). Pick the right groupId from the list below and specify it directly in the Acl entry"
+                    for ($i = 0; $i -lt $AdGroup.Count; $i++) {
+                        
+                    }($Id..1)| ForEach-Object{Write-Host "  Duplicate $_ : $($AdGroup[$_].Id)" }
+                    Throw "Cannot determine group. Found $($AdGroup.Count) duplicate entries. See previous output for resolution options."
                 }
             }
             if ($null -ne $AdGroupId){
