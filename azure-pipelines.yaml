@@ -65,7 +65,7 @@ steps:
   - task: PowerShell@2
     displayName: "PowerShell Pester Tests "
     inputs:
-      targetType: "inline"
+      targetType: 'inline'
       script: |
         Install-Module Az -Scope CurrentUser -Force -Verbose -MinimumVersion 5.3.0
         $credential = New-Object System.Management.Automation.PSCredential ("${env:SPID}", (ConvertTo-SecureString ${env:SPKEY} -AsPlainText -Force))
@@ -81,6 +81,7 @@ steps:
         -OutputFile "$Edition-TestResults.xml" `
         -OutputFormat NUnitXML `
         -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+      ignoreLASTEXITCODE: true
       pwsh: true
 
 
