@@ -57,19 +57,28 @@ Function Set-FatAdlsAclEntryOnItem {
             else {
                 Write-Verbose "Getting the GroupId from AAD"
                 $ADGroup = Get-FatCachedAdGroupId -DisplayName $acl.ADGroup
-                $ADGroupId = $ADGroup.Id
+                if (@($AdGroup).Count -eq 1){
+                    $ADGroupId = $ADGroup.Id
+                }
+                else{
+                    Write-Host "$($AdGroup.Count) entries found for group ($($acl.ADGroup)). Pick the right groupId from the list below and specify it directly in the Acl entry"
+                    (0..($AdGroup.Count-1))| ForEach-Object{Write-Host "  Duplicate $_ : $($AdGroup[$_].Id)" }
+                    Throw "Cannot determine group. Found $($AdGroup.Count) duplicate entries. See previous output for resolution options."
+                }
             }
-            if (-not [string]::IsNullOrWhitespace($acl.DefaultPermission)) {
-                $aclCountBefore = $aclList.Count
-                Write-Verbose "Adding Default Acl $($acl.DefaultPermission) for $AdGroupId ($($acl.AdGroup))"
-                $aclList = set-AzDataLakeGen2ItemAclObject -AccessControlType group -EntityID $AdGroupId  -Permission $acl.DefaultPermission -InputObject $aclList -DefaultScope 
-                Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
-            }
-            if ( -not [string]::IsNullOrWhitespace($acl.AccessPermission)) {
-                $aclCountBefore = $aclList.Count
-                Write-Verbose "Adding Access Acl $($acl.AccessPermission) for $AdGroupId ($($acl.AdGroup))"
-                $aclList = set-AzDataLakeGen2ItemAclObject -AccessControlType group -EntityID $AdGroupId  -Permission $acl.AccessPermission -InputObject $aclList
-                Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
+            if ($null -ne $AdGroupId){
+                if (-not [string]::IsNullOrWhitespace($acl.DefaultPermission)) {
+                    $aclCountBefore = $aclList.Count
+                    Write-Verbose "Adding Default Acl $($acl.DefaultPermission) for $AdGroupId ($($acl.AdGroup))"
+                    $aclList = set-AzDataLakeGen2ItemAclObject -AccessControlType group -EntityID $AdGroupId  -Permission $acl.DefaultPermission -InputObject $aclList -DefaultScope 
+                    Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
+                }
+                if ( -not [string]::IsNullOrWhitespace($acl.AccessPermission)) {
+                    $aclCountBefore = $aclList.Count
+                    Write-Verbose "Adding Access Acl $($acl.AccessPermission) for $AdGroupId ($($acl.AdGroup))"
+                    $aclList = set-AzDataLakeGen2ItemAclObject -AccessControlType group -EntityID $AdGroupId  -Permission $acl.AccessPermission -InputObject $aclList
+                    Write-Verbose "Count of Acls before and After $aclCountBefore-$($AclList.Count) "
+                }
             }
         }
      
@@ -143,7 +152,6 @@ Function Set-FatAdlsAclEntryOnItem {
         }
     }
     catch {
-        Write-Error $_
         Throw
     }
 }
