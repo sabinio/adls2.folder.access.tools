@@ -136,3 +136,4 @@ steps:
         -apiKey '$(apikey)' `
         -path $(Build.ArtifactStagingDirectory)/adls2.folder.access.tools
       pwsh: true
+      
