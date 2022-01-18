@@ -1,4 +1,5 @@
 {
+    "subscriptionName": "Name of Subscription that contains lake and whose tenant groups exists",
     "ResourceGroupName": "Resource group name where your Data Lake is",
     "dataLakeName": "Name of Azure Data Lake Gen 2. Needs to exist."
     "testContainerName": "container that is going to be created on datalake",
