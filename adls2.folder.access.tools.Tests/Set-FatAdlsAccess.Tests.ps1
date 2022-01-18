@@ -177,7 +177,7 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
 
             $zero = @{}
             $folderAccess[0].psobject.properties | ForEach-Object { $zero[$_.Name] = $_.Value }
-            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsOutput'; Perms = 'rwx'; Type = 'Group'; Default = $false }
+            [PSCustomObject]$FolderAccess0 = @{Group = $config.testAADGroupName2; Perms = 'rwx'; Type = 'Group'; Default = $false }
             $compare = Compare-Object $zero.Values $FolderAccess0.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
         }
@@ -222,10 +222,10 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
 
         It "Update ACls Recursively" {
             $expectedSecondRun = @(
-                [pscustomobject]@{Group = 'adlsOutput'; Perms = 'rwx'; Type = 'Group'; Default = $False; SideIndicator = '=>' }
-                [pscustomobject]@{Group = 'adlsOutput'; Perms = 'rwx'; Type = 'Group'; Default = $True; SideIndicator = '=>' }
-                [pscustomobject]@{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $False; SideIndicator = '<=' }
-                [pscustomobject]@{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $True; SideIndicator = '<=' }
+                [pscustomobject]@{Group = $config.testAADGroupName2; Perms = 'rwx'; Type = 'Group'; Default = $False; SideIndicator = '=>' }
+                [pscustomobject]@{Group = $config.testAADGroupName2; Perms = 'rwx'; Type = 'Group'; Default = $True; SideIndicator = '=>' }
+                [pscustomobject]@{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $False; SideIndicator = '<=' }
+                [pscustomobject]@{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $True; SideIndicator = '<=' }
             )
             $csvPath = Join-Path $PSScriptRoot csvs/updateaaclrecurse.csv
             $csvEntries = @(
@@ -244,13 +244,13 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'insert/recursively/folder/permissions/on/existing/folders' 
             $folderAccess = $folderAccess | Where-Object { $_.Group -eq $config.testAADGroupName2 }
 
-            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $false }
+            [PSCustomObject]$FolderAccess0 = @{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $false }
             $firstRunAccess = @{}
             $folderAccess[0].psobject.properties | ForEach-Object { $firstRunAccess[$_.Name] = $_.Value }
             $compare = Compare-Object $firstRunAccess.values $FolderAccess0.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
 
-            [PSCustomObject]$FolderAccess1 = @{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $true }
+            [PSCustomObject]$FolderAccess1 = @{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $true }
             $firstRunDefault = @{}
             $folderAccess[1].psobject.properties | ForEach-Object { $firstRunDefault[$_.Name] = $_.Value }
             $compare = Compare-Object $firstRunDefault.values $FolderAccess1.Values -property "Group", "Perms", "Type", "Default"
@@ -296,13 +296,13 @@ Describe "Set-FatAdlsAccess" -Tag 'Integration' {
             $folderAccess = Get-FatAclDetailsOnFolder -ctx $context -ContainerName $config.testContainerName -FolderName 'winsert/recursively/folder/permissions/on/existing/folders' 
             $folderAccess = $folderAccess | Where-Object { $_.Group -eq $config.testAADGroupName2 }
 
-            [PSCustomObject]$FolderAccess0 = @{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $false }
+            [PSCustomObject]$FolderAccess0 = @{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $false }
             $firstRunAccess = @{}
             $folderAccess[0].psobject.properties | ForEach-Object { $firstRunAccess[$_.Name] = $_.Value }
             $compare = Compare-Object $firstRunAccess.values $FolderAccess0.Values -property "Group", "Perms", "Type", "Default"
             $compare | Should -BeNullOrEmpty
 
-            [PSCustomObject]$FolderAccess1 = @{Group = 'adlsOutput'; Perms = 'r-x'; Type = 'Group'; Default = $true }
+            [PSCustomObject]$FolderAccess1 = @{Group = $config.testAADGroupName2; Perms = 'r-x'; Type = 'Group'; Default = $true }
             $firstRunDefault = @{}
             $folderAccess[1].psobject.properties | ForEach-Object { $firstRunDefault[$_.Name] = $_.Value }
             $compare = Compare-Object $firstRunDefault.values $FolderAccess1.Values -property "Group", "Perms", "Type", "Default"
