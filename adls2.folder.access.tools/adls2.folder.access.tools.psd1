@@ -9,25 +9,25 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule = 'adls2.folder.access.tools.psm1'
+    RootModule        = 'adls2.folder.access.tools.psm1'
 
     # Version number of this module.
-    ModuleVersion = '0.0.0'
+    ModuleVersion     = '0.0.0'
 
     # ID used to uniquely identify this module
-    GUID = 'c2aa2c78-cb62-4d4e-93b1-151e8b549e55'
+    GUID              = 'c2aa2c78-cb62-4d4e-93b1-151e8b549e55'
 
     # Author of this module
-    Author = "Richie Lee"
+    Author            = "Richie Lee"
 
     # Company or vendor of this module
-    CompanyName = 'Sabin Ltd'
+    CompanyName       = 'Sabin Ltd'
 
     # Copyright statement for this module
-    Copyright = 'Sabin Ltd 2020'
+    Copyright         = 'Sabin Ltd 2020'
 
     # Description of the functionality provided by this module
-    Description = 'PowerShell module to help with granting Azure Active Directory Groups to have specific access (read/write) to folders in an Azure Data Lake.'
+    Description       = 'PowerShell module to help with granting Azure Active Directory Groups to have specific access (read/write) to folders in an Azure Data Lake.'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '5.0'
@@ -66,17 +66,17 @@
     # NestedModules = @()
 
     # Functions to export from this module
-    FunctionsToExport =  'Set-FatAdlsAccess', "Get-FatDataLake",
-                        'Get-FatCsvAsArray', 'Test-FatAADGroupsExist'
+    FunctionsToExport = 'Set-FatAdlsAccess', "Get-FatDataLake",
+    'Get-FatCsvAsArray', 'Test-FatAADGroupsExist'
 
     # Cmdlets to export from this module
-    CmdletsToExport = '*'
+    CmdletsToExport   = '*'
 
     # Variables to export from this module
     VariablesToExport = '*'
 
     # Aliases to export from this module
-    AliasesToExport = '*'
+    AliasesToExport   = '*'
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -88,11 +88,11 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData = @{
+    PrivateData       = @{
         PSData = @{
             Prerelease = 'preview'
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = @("DataLake", "Azure", "DevOps", "Security")
+            Tags       = @("DataLake", "Azure", "DevOps", "Security")
 
             # A URL to the license for this module.
             # LicenseUri = ''
@@ -116,4 +116,4 @@
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
 
-    }
+}
