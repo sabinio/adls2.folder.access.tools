@@ -16,6 +16,8 @@ BeforeAll {
     Import-Module $CommandNamePath -Force
     $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Private/Get-FatCachedAdGroupName.ps1)
     Import-Module $CommandNamePath -Force
+    $CommandNamePath = Resolve-Path (Join-Path $ModulePath /Private/Measure-FatGroupNameLength.ps1)
+    Import-Module $CommandNamePath -Force
     $helpers = join-path $PSScriptRoot helpers\HelperFunctions.ps1
     Import-Module $helpers -Force
     $context = Get-FatAzContextForStorageAccount -resourceGroupName $config.resourceGroupName -dataLakeStoreName $config.dataLakeName
