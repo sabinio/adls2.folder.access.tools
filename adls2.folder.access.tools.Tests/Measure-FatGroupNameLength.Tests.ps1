@@ -23,10 +23,10 @@ Describe "Check Group Lengths" {
         { Measure-FatGroupNameLength -GroupName $GroupNames.ADGroup } | Should -Not -Throw
     }
 
-    it "Should reject lengths greater than 64 chars and throw" {
+    it "Should reject lengths greater than 120 chars and throw" {
         { 
             $GroupNames = [PSCustomObject]@{
-                ADGroup = 'asdfasdfasdfgsdfgsdfgfdsghdhjfghjhdfghdghfggdfgfdghghjfghjdfghsdfghfdsghdhdfhsghdfghdf'
+                ADGroup = 'asdfasdfasdfgsdfgsdsdfdsfadfafasdfasdfadsfsdfasdfsdfasdfasdfsadfasdfasfgfdsghdhjfghjhdfghdghfggdfgfdghghjfghjdfghsdfghfdsghdhdfhsghdfghdf'
             }
             Measure-FatGroupNameLength -GroupName $GroupNames.ADGroup } | Should -Throw
     }
@@ -56,6 +56,5 @@ Describe "Check Group Lengths" {
             
     }
 }
-
 
 
