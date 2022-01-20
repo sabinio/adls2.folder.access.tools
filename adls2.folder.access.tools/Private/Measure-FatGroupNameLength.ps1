@@ -5,7 +5,7 @@ Function Measure-FatGroupNameLength {
     $TooLongGroupNames = @()
     foreach ($GroupName in $GroupNameList) {
         $GroupNameLength = $GroupName.Length
-        if ($GroupNameLength -gt 64) {
+        if ($GroupNameLength -gt 120) {
             $TooLongGroupNames += $GroupName
         }
         if ($GroupNameLength -eq 0) {
@@ -14,7 +14,7 @@ Function Measure-FatGroupNameLength {
         }
     }
     if ($TooLongGroupNames.length -ge 1) {
-        Write-Error "The names of the following groups excede the character length (64) in Azure Active Directory: ` "
+        Write-Error "The names of the following groups excede the character length (120) in Azure Active Directory: ` "
         foreach ($TooLongGroupName in $TooLongGroupNames) {
             Write-Error "$TooLongGroupName ` "
         }
