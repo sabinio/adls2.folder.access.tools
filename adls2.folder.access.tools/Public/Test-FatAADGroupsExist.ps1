@@ -1,7 +1,8 @@
 Function Test-FatAADGroupsExist {
     [CmdletBinding()]
     param(
-        [parameter(Mandatory = $true)] $csvPath
+        [parameter(Mandatory = $true)] $csvPath,
+        [parameter(Mandatory = $false)][switch] $continueOnNonExistingGroup
     )
 
     $ADGroups = @{}
@@ -19,8 +20,13 @@ Function Test-FatAADGroupsExist {
     if ($notFoundGroups.count -gt 0) {
         Write-Host "The following groups were not found -"
         Foreach ($Name in $notFoundGroups.Name)
-        {Write-Host "$Name"}
-        Throw
+        { Write-Host "$Name" }
+        if (-not $continueOnNonExistingGroup) {
+            Throw
+        }
+        else {
+            Return $notFoundGroups
+        }        
     }
 }
 
